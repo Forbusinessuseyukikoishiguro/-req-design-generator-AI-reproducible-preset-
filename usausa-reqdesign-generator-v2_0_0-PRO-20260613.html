@@ -1,0 +1,1770 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>うさうさ開発フロア PRO｜要件定義＆詳細設計ジェネレーター v2.0.0 PRO</title>
+<style>
+  :root{
+    --bg:#fff2f8; --bg2:#ffe6f0; --panel:#fffafc; --panel2:#fff0f6;
+    --cyan:#ff77a9; --cyan-d:#e85a92; --amber:#ff9e7d; --green:#56c596; --red:#ff7a90;
+    --paper:#fffdfe; --ink:#5e3a52; --ink-soft:#9b6f87; --line:#ffe0ec; --line-d:#ffc9de;
+    --moon:#b07d9b; --muted:#bb8ca6; --chipbg:#fff0f6;
+    --sans:"Hiragino Maru Gothic ProN","Yu Gothic","Hiragino Kaku Gothic ProN","Noto Sans JP","Rounded Mplus 1c","Inter",system-ui,sans-serif;
+    --mono:"JetBrains Mono","SFMono-Regular","MS Gothic","Consolas",monospace;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{font-family:var(--sans);color:#6b4a5e;min-height:100vh;
+    background:
+      url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%27112%27%20height%3D%27112%27%20viewBox%3D%270%200%20112%20112%27%3E%3Cg%20fill%3D%27%23c69a4e%27%20fill-opacity%3D%270.07%27%20stroke%3D%27%23bd9a52%27%20stroke-opacity%3D%270.20%27%20stroke-width%3D%271%27%3E%3Ccircle%20cx%3D%2756%27%20cy%3D%2756%27%20r%3D%275.5%27%2F%3E%3Cellipse%20cx%3D%2756%27%20cy%3D%2741%27%20rx%3D%275.5%27%20ry%3D%2710.5%27%2F%3E%3Cellipse%20cx%3D%2771%27%20cy%3D%2756%27%20rx%3D%2710.5%27%20ry%3D%275.5%27%2F%3E%3Cellipse%20cx%3D%2756%27%20cy%3D%2771%27%20rx%3D%275.5%27%20ry%3D%2710.5%27%2F%3E%3Cellipse%20cx%3D%2741%27%20cy%3D%2756%27%20rx%3D%2710.5%27%20ry%3D%275.5%27%2F%3E%3Cellipse%20cx%3D%2767%27%20cy%3D%2745%27%20rx%3D%279%27%20ry%3D%275%27%20transform%3D%27rotate%2845%2067%2045%29%27%2F%3E%3Cellipse%20cx%3D%2767%27%20cy%3D%2767%27%20rx%3D%279%27%20ry%3D%275%27%20transform%3D%27rotate%28-45%2067%2067%29%27%2F%3E%3Cellipse%20cx%3D%2745%27%20cy%3D%2767%27%20rx%3D%279%27%20ry%3D%275%27%20transform%3D%27rotate%2845%2045%2067%29%27%2F%3E%3Cellipse%20cx%3D%2745%27%20cy%3D%2745%27%20rx%3D%279%27%20ry%3D%275%27%20transform%3D%27rotate%28-45%2045%2045%29%27%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E"),
+      radial-gradient(900px 520px at 6% 0%,rgba(228,168,170,.42) 0%,transparent 58%),
+      radial-gradient(1000px 600px at 92% 4%,rgba(220,180,104,.60) 0%,transparent 56%),
+      radial-gradient(820px 600px at 100% 100%,rgba(196,152,72,.55) 0%,transparent 55%),
+      linear-gradient(145deg,#f6dedd 0%,#efd8c2 44%,#e7cc9d 72%,#dcbb7e 100%);
+    background-attachment:fixed;
+    background-size:112px 112px,auto,auto,auto,auto;background-repeat:repeat,no-repeat,no-repeat,no-repeat,no-repeat}
+  .bar{position:sticky;top:0;z-index:30;display:flex;flex-wrap:wrap;gap:9px;align-items:center;
+    padding:11px 18px;background:rgba(255,244,250,.92);backdrop-filter:blur(8px);border-bottom:1px solid #ffcedf}
+  .brand{display:flex;align-items:center;gap:11px;margin-right:auto}
+  .brand .lg{font-size:22px}
+  .brand b{color:#c43d86;font-size:16px;letter-spacing:.3px}
+  .pro{display:inline-block;font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.6px;color:#5a3e12;background:linear-gradient(180deg,#f3d68d,#dcb868);border:1px solid #c9a24e;border-radius:7px;padding:1px 8px;margin-left:6px;vertical-align:middle;box-shadow:0 1px 2px rgba(150,110,40,.3),inset 0 1px 0 rgba(255,255,255,.5)}
+  .brand small{color:var(--moon);font-size:11.5px;display:block;margin-top:1px;font-family:var(--mono)}
+  .controls{display:flex;flex-wrap:wrap;gap:7px;align-items:center}
+  .bar2{position:sticky;top:51px;z-index:29;display:flex;flex-wrap:wrap;gap:7px;align-items:center;padding:8px 18px;background:rgba(255,238,246,.88);backdrop-filter:blur(8px);border-bottom:1px solid #ffdbc8}
+  .bar2 .bl{font-family:var(--mono);font-size:11px;border:1px solid;border-radius:8px;padding:3px 8px}
+  .bar2 .bl.ok{color:#2c8f63;border-color:var(--green);background:rgba(86,197,150,.15)}
+  .bar2 .bl.warn{color:#c2702f;border-color:var(--amber);background:rgba(255,158,125,.16)}
+  .bar2 .sep{font-family:var(--mono);font-size:10.5px;color:var(--muted);padding-left:6px;border-left:1px solid rgba(196,61,134,.18);margin-left:4px}
+  .bar2 select{max-width:220px}
+  select{background:#fff;color:#6b4a5e;border:1px solid #ffb1d0;border-radius:10px;padding:6px 9px;font-size:12.5px;font-family:var(--sans)}
+  .btn{cursor:pointer;border:1px solid #ffbdd7;background:linear-gradient(180deg,#ffffff,#fff0f6);
+    color:#8a4f70;border-radius:999px;padding:7px 13px;font-size:12.5px;display:inline-flex;gap:6px;align-items:center;font-family:var(--sans)}
+  .btn:hover{border-color:var(--cyan);box-shadow:0 0 10px rgba(255,119,169,.4)}
+  .btn.cy{background:linear-gradient(180deg,#ff95bb,#ff6fa1);color:#fff;border-color:#ff5f96;font-weight:700}
+  .btn.am{background:linear-gradient(180deg,#ffc09a,#ff9e7d);color:#5a2e12;border-color:#ff8a55;font-weight:700}
+  .stamp{font-family:var(--mono);border:1.5px solid var(--cyan);border-radius:10px;padding:4px 9px;color:var(--cyan-d);
+    font-size:10.5px;line-height:1.25;text-align:left;background:rgba(255,119,169,.1)}
+  .stamp b{color:#c43d86;font-size:12px}
+  .wrap{display:grid;grid-template-columns:minmax(360px,1fr) minmax(440px,1.12fr);gap:16px;padding:16px;max-width:1560px;margin:0 auto;align-items:start}
+  @media(max-width:1000px){.wrap{grid-template-columns:1fr}}
+  .panel{background:rgba(255,252,253,.86);border:1px solid #d8b46a;border-radius:18px;padding:4px 14px 14px;box-shadow:0 14px 38px rgba(190,150,90,.22),inset 0 0 0 1px rgba(255,252,245,.6)}
+  .panel-h{font-size:13.5px;color:#c43d86;padding:12px 4px 8px;border-bottom:1px solid #ffd7e6;display:flex;gap:8px;align-items:center}
+  .panel-h .k{font-family:var(--mono);color:var(--cyan-d);font-size:11px;border:1px solid #ffb1d0;border-radius:6px;padding:1px 6px}
+  .tracebar{margin:8px 2px 2px;border-radius:10px;padding:8px 12px;font-size:12.5px;font-family:var(--mono);border:1px solid;cursor:default}
+  .tracebar.good{background:rgba(86,197,150,.15);border-color:var(--green);color:#2c8f63}
+  .tracebar.bad{background:rgba(255,158,125,.16);border-color:var(--amber);color:#c2702f}
+  details.sec{border:1px solid #e6cd95;border-radius:14px;margin:11px 0;background:rgba(255,249,252,.9);overflow:hidden}
+  details.sec>summary{cursor:pointer;list-style:none;padding:10px 13px;font-weight:700;color:#a8447b;display:flex;align-items:center;gap:10px;font-size:13.5px;background:rgba(255,119,169,.12)}
+  details.sec>summary::-webkit-details-marker{display:none}
+  details.sec>summary .pn{font-family:var(--mono);color:var(--cyan-d);font-size:11px;border:1px solid #ffb1d0;border-radius:6px;padding:1px 7px;min-width:30px;text-align:center}
+  details.sec[open]>summary{border-bottom:1px solid #ffd2e3}
+  .sec-body{padding:11px 13px}
+  .field{margin:9px 0}
+  .field label{display:block;font-size:11.5px;color:var(--moon);margin-bottom:4px;font-family:var(--mono)}
+  .field input,.field textarea{width:100%;background:#fffdfe;border:1px solid #ffcadd;border-radius:10px;padding:7px 9px;font-size:13px;color:#5e3a52;font-family:var(--sans)}
+  .field input::placeholder,.field textarea::placeholder,.rep input::placeholder{color:#d79dbd;font-style:italic;opacity:.9}
+  .field textarea{min-height:60px;resize:vertical;line-height:1.5}
+  .field input:focus,.field textarea:focus{outline:none;border-color:var(--cyan);box-shadow:0 0 0 3px rgba(255,119,169,.25)}
+  textarea.mono{font-family:var(--mono);font-size:12px}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:9px}.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px}
+  @media(max-width:520px){.row2,.row3{grid-template-columns:1fr}}
+  .hint{font-size:11px;color:var(--muted);margin:2px 0 0}
+  .rep{border:1px dashed #ffbdd7;border-radius:10px;padding:9px;margin:7px 0}
+  .rep .reprow{display:grid;gap:5px;margin-bottom:6px;grid-template-columns:1fr;align-items:start}
+  .rep .reprow.cols input{margin:0}
+  .miniadd{cursor:pointer;color:var(--cyan-d);font-size:12px;background:none;border:1px dashed #ffb1d0;border-radius:999px;padding:5px 11px}
+  .frnum{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:2px 0 7px;font-size:11.5px;color:var(--moon);font-family:var(--mono)}
+  .frnum .seg{display:inline-flex;align-items:center;gap:4px;background:rgba(255,119,169,.08);border:1px solid #ffcedf;border-radius:999px;padding:3px 10px;cursor:pointer;color:#8a4f70}
+  .frnum .seg input{accent-color:var(--cyan);margin:0}
+  .frnum .segbtn{cursor:pointer;border:1px solid #ffbdd7;background:#fff;color:#8a4f70;border-radius:999px;padding:4px 13px;font-size:11.5px;font-family:var(--sans)}
+  .frnum .segbtn:hover{border-color:var(--cyan)}
+  .frnum .segbtn.on{background:linear-gradient(180deg,#ff95bb,#ff6fa1);color:#fff;border-color:#ff5f96;font-weight:700}
+  .field input[readonly]{background:#fff4f9;color:#a8447b;cursor:default}
+  .optgrid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px}
+  @media(max-width:560px){.optgrid{grid-template-columns:1fr}}
+  .optchk{display:flex;gap:7px;align-items:center;font-size:12px;color:#8a4f70;background:rgba(255,119,169,.09);border:1px solid #ffcedf;border-radius:10px;padding:7px 9px;cursor:pointer}
+  .optchk input{accent-color:var(--cyan)}
+  .opted{border:1px dashed #ffc59c;border-radius:10px;padding:9px;margin:8px 0;background:rgba(255,158,125,.09)}
+  .opted-h{font-size:12.5px;color:#c2702f;font-weight:700;margin-bottom:6px;font-family:var(--mono)}
+  .del{cursor:pointer;border:none;background:rgba(255,122,144,.2);color:#c2455c;border-radius:8px;padding:4px 8px;font-size:11.5px;justify-self:end}
+  .ai{cursor:pointer;border:1px solid #ffb1d0;background:rgba(255,119,169,.16);color:#a8447b;border-radius:8px;padding:3px 7px;font-size:10.5px;margin-left:6px}
+  /* ===== document (peachy paper) ===== */
+  .stage{display:flex;justify-content:center}
+  #doc{width:100%;max-width:760px;background:var(--paper);color:var(--ink);border-radius:12px;padding:42px 48px 36px;
+    box-shadow:0 16px 50px rgba(190,150,90,.30),inset 0 0 0 1px rgba(201,162,96,.45);font-size:13px;line-height:1.7}
+  @media(max-width:520px){#doc{padding:26px 20px}}
+  #doc .cover{padding:4px 0 22px;border-bottom:2px solid var(--cyan)}
+  #doc .eyebrow{font-family:var(--mono);font-size:11px;color:var(--cyan-d);letter-spacing:1px}
+  #doc .cover h1{font-size:23px;margin:6px 0 4px;color:#a8447b}
+  #doc .cover .meta{color:var(--ink-soft);font-size:12px;font-family:var(--mono)}
+  #doc .bstamp{display:inline-block;margin-top:12px;font-family:var(--mono);font-size:11px;color:var(--cyan-d);
+    border:1.5px solid var(--cyan);border-radius:9px;padding:5px 10px;background:rgba(255,119,169,.08)}
+  #doc .bstamp b{color:#a8447b}
+  #doc .part{font-family:var(--mono);font-size:12px;color:#fff;background:var(--cyan-d);display:inline-block;
+    padding:3px 11px;border-radius:999px;margin:26px 0 6px;letter-spacing:.5px}
+  #doc h2{font-size:17px;margin:20px 0 7px;color:#a8447b;border-left:4px solid var(--cyan);padding-left:9px}
+  #doc h3{font-size:14px;margin:14px 0 5px;color:#8a4f70}
+  #doc p{margin:6px 0}#doc ul{margin:5px 0;padding-left:19px}#doc li{margin:3px 0}
+  #doc table{border-collapse:collapse;width:100%;margin:7px 0;font-size:12px}
+  #doc th{background:var(--cyan-d);color:#fff;text-align:left;padding:6px 8px;font-weight:600;font-size:11.5px}
+  #doc td{border:1px solid var(--line-d);padding:5px 8px;vertical-align:top}
+  #doc tr:nth-child(even) td{background:#fff4f9}
+  #doc table.ids td:first-child{font-family:var(--mono);color:var(--cyan-d);font-weight:700;white-space:nowrap}
+  #doc pre{font-family:var(--mono);font-size:11px;background:#fdeef5;color:#8a4f70;border:1px solid var(--line-d);border-radius:8px;padding:11px 13px;overflow:auto;line-height:1.5}
+  #doc .box{border-radius:10px;padding:10px 13px;margin:10px 0;border:1px solid;border-left-width:5px}
+  #doc .box .bt{font-weight:700;display:block;margin-bottom:3px;font-size:12.5px}
+  #doc .b-note{background:#fff0f6;border-color:var(--cyan)} #doc .b-note .bt{color:var(--cyan-d)}
+  #doc .b-warn{background:#fff2e8;border-color:var(--amber)} #doc .b-warn .bt{color:#c2702f}
+  #doc .b-repro{background:#eafff5;border-color:var(--green)} #doc .b-repro .bt{color:#2c8f63}
+  #doc .pri-must{color:#d6336c;font-weight:700}#doc .pri-should{color:#c2702f;font-weight:700}
+  #doc .pri-could{color:#9a6fb0;font-weight:700}#doc .pri-wont{color:#b08ca0;font-weight:700}
+  #doc .fact{color:var(--cyan-d);font-weight:700}#doc .opinion{color:#c2702f;font-weight:700}
+  #doc .docfoot{margin-top:22px;border-top:1px solid var(--cyan);padding-top:7px;text-align:center;color:var(--ink-soft);font-size:11.5px;font-family:var(--mono)}
+  /* mascot + toast + modal */
+  #bun{position:fixed;left:15px;bottom:13px;z-index:40;cursor:pointer;font-size:27px;filter:drop-shadow(0 3px 5px rgba(214,120,160,.45));transition:transform .15s}
+  #bun:hover{transform:translateY(-3px)}
+  #cheer{position:fixed;left:50px;bottom:42px;z-index:40;background:#fff0f6;color:#a8447b;border:1px solid var(--cyan);border-radius:12px;padding:6px 10px;font-size:12px;font-family:var(--mono);opacity:0;transform:translateY(6px);transition:.25s;pointer-events:none}
+  #cheer.on{opacity:1;transform:translateY(0)}
+  .modal{position:fixed;inset:0;background:rgba(80,30,55,.45);display:none;align-items:center;justify-content:center;z-index:50}
+  .modal.on{display:flex}
+  .modal .card{background:#fffafc;border:1px solid #d8b46a;border-radius:18px;padding:18px;max-width:460px;width:92%;color:#5e3a52;box-shadow:inset 0 0 0 1px rgba(255,252,245,.6)}
+  .modal h3{margin:0 0 6px;color:#c43d86}.modal p{font-size:12px;color:var(--moon)}
+  .modal textarea,.modal input{width:100%;background:#fffdfe;border:1px solid #ffcadd;border-radius:9px;padding:8px;color:#5e3a52;font-family:var(--mono);font-size:12px}
+  .modal textarea{min-height:240px;line-height:1.5;white-space:pre}
+  .modal .x{display:flex;gap:7px;justify-content:flex-end;margin-top:8px}
+  .help-card{max-width:720px;max-height:84vh;overflow:auto}
+  .help-card h4{margin:14px 0 4px;color:var(--cyan-d);font-size:13px;font-family:var(--mono)}
+  .help-card h4:first-of-type{margin-top:6px}
+  .help-card p,.help-card li{font-size:12.5px;color:#6b4a5e;line-height:1.7}
+  .help-card ul{margin:4px 0 6px 18px;padding:0}
+  .help-card .ex{display:block;background:#fff0f6;border-left:3px solid var(--cyan);padding:6px 9px;margin:5px 0;border-radius:7px;font-family:var(--mono);font-size:11.5px;color:#8a4f70;white-space:pre-wrap}
+  .help-card .rule{background:#fff0f6;border:1px solid #ffcedf;border-radius:10px;padding:8px 11px;margin:7px 0}
+  .help-card .ramen{background:#fff3e8;border:1px solid #ffcaa0;border-radius:10px;padding:8px 11px;margin:9px 0;color:#b5651d}
+  .board{background:#33503f;border:6px solid #c08a52;border-radius:12px;padding:13px 16px;margin:11px 0;color:#eef6ee;
+    box-shadow:inset 0 0 28px rgba(0,0,0,.34),0 6px 16px rgba(150,100,70,.3);
+    background-image:radial-gradient(rgba(255,255,255,.045) 1px,transparent 1px);background-size:13px 13px}
+  .board h5{margin:0 0 8px;font-size:14px;color:#ffe79a;letter-spacing:.4px;text-shadow:0 1px 0 rgba(0,0,0,.35);border-bottom:2px dashed rgba(255,255,255,.35);padding-bottom:5px}
+  .board p,.board li{font-size:12.5px;line-height:1.75;color:#eaf3ea}
+  .board ul{margin:5px 0 0 17px;padding:0}
+  .board li{margin:3px 0}
+  .board b{color:#ffd9ea}
+  .board .k{font-family:var(--mono);color:#cdeecd;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.22);border-radius:5px;padding:0 5px;font-size:11px;white-space:nowrap}
+  .toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%) translateY(18px);opacity:0;background:#fff0f6;color:#a8447b;border:1px solid var(--cyan);border-radius:11px;padding:9px 15px;font-size:12.5px;z-index:60;transition:.3s}
+  .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+  @media(prefers-reduced-motion:reduce){*{transition:none!important}}
+  @media print{
+    body{background:#fff}
+    .bar,.panel.formpanel,#bun,#cheer,.modal,.toast,.panel-h{display:none!important}
+    .wrap{display:block;padding:0;max-width:none}.panel.docpanel{background:none;border:none;box-shadow:none;padding:0}
+    #doc{box-shadow:none;max-width:none;border-radius:0}
+    #doc .box,#doc pre,#doc th,#doc tr:nth-child(even) td,#doc .part,#doc .bstamp{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  }
+</style>
+</head>
+<body>
+  <div class="bar">
+    <div class="brand"><span class="lg">🐰🦺</span>
+      <div><b>うさうさ開発フロア <span class="pro">PRO</span></b><small>req &amp; design generator · AI-reproducible · v2.0.0 PRO · 2026-06-13</small></div></div>
+    <div class="controls">
+      <label style="color:var(--moon);font-size:11.5px;font-family:var(--mono)">preset
+        <select id="presetSel" style="margin-left:4px">
+          <option value="artifact">まるごとスイート（サンプル）</option>
+          <option value="webapi">Web API（バックエンド）</option>
+          <option value="empty">空（カスタム）</option>
+        </select></label>
+      <button class="btn am" id="helpBtn" title="各項目の書き方・例・ルール">📖 書き方ガイド</button>
+      <button class="btn" id="aiKeyBtn">⚙️ AIの鍵</button>
+      <button class="btn" id="jsonBtn">{ } JSON</button>
+      <button class="btn am" id="promptBtn">🤖 AI再現プロンプト</button>
+      <button class="btn" id="copyBtn">📋 Markdown</button>
+      <button class="btn" id="mdBtn">⬇ .md</button>
+      <button class="btn" id="htmlBtn">⬇ .html</button>
+      <button class="btn" id="txtBtn" title="プレーンテキスト">⬇ .txt</button>
+      <button class="btn" id="csvBtn" title="CSV（Excel／スプレッドシートで開けます）">⬇ .csv</button>
+      <button class="btn" id="docxBtn" title="本物のWord。オンライン時のみライブラリ取得">⬇ .docx</button>
+      <button class="btn" id="xlsxBtn" title="本物のExcel。オンライン時のみライブラリ取得">⬇ .xlsx</button>
+      <button class="btn cy" id="pdfBtn">🖨 印刷/PDF</button>
+    </div>
+    <div class="stamp" id="stamp"></div>
+  </div>
+
+  <div class="bar2">
+    <span class="bl" id="storeMode">💾 保存</span>
+    <button class="btn" id="saveBtn">💾 編集を保存</button>
+    <span class="sep">一時保存</span>
+    <button class="btn am" id="draftSaveBtn">🕒 一時保存</button>
+    <select id="draftSel"><option value="">一時保存リスト…</option></select>
+    <button class="btn" id="draftRestoreBtn">↩ 復元</button>
+    <button class="btn" id="draftDelBtn">🗑</button>
+    <button class="btn" id="tplSaveBtn">＋ 名前を付けてひな形に保存</button>
+    <span class="sep">ひな形</span>
+    <select id="tplSel"><option value="">保存済みひな形…</option></select>
+    <button class="btn" id="tplLoadBtn">読込</button>
+    <button class="btn" id="tplDelBtn">🗑 削除</button>
+    <span class="sep"></span>
+    <button class="btn" id="tplDlBtn">⬇ ひな形DL(.json)</button>
+    <button class="btn" id="tplImpBtn">⬆ ひな形読込</button>
+    <input type="file" id="tplFile" accept=".json,application/json" style="display:none">
+    <span class="sep">一括</span>
+    <button class="btn" id="bundleDlBtn">⬇ 全ひな形</button>
+    <button class="btn" id="bundleImpBtn">⬆ 一括取込</button>
+    <input type="file" id="bundleFile" accept=".json,application/json" style="display:none">
+  </div>
+
+  <div class="wrap">
+    <div class="panel formpanel">
+      <div class="panel-h"><span class="k">入力</span> 設計フロア — 値を埋めると右にビルド可能仕様が組み上がります</div>
+      <div id="form"></div>
+    </div>
+    <div class="panel docpanel">
+      <div class="panel-h"><span class="k">出力</span> 要件定義書 兼 詳細設計書 — そのまま印刷・書き出し・AI再現に渡せます<button class="btn cy" id="previewRefreshBtn" style="margin-left:auto">🔄 プレビューを最新に更新</button></div>
+      <div id="traceBanner" class="tracebar" style="display:none"></div>
+      <div class="stage"><div id="doc"></div></div>
+    </div>
+  </div>
+
+  <div id="bun" title="つつく">🐰</div><div id="cheer"></div>
+
+  <div class="modal" id="keyModal"><div class="card">
+    <h3>🔑 APIキー設定 ＆ 接続テスト</h3>
+    <p>Anthropic APIキー。<b>この端末だけ</b>に保存します（localStorage、不可時はメモリ）。保存先は端末内のみ・送信先はAnthropic APIだけ。空欄でも生成・書き出しは全部使えます。共有PCでは使用後に「クリア」を。</p>
+    <input id="keyInput" type="password" placeholder="sk-ant-...（任意）" autocomplete="off">
+    <div id="keyResult" class="hint" style="margin-top:8px;min-height:1.3em"></div>
+    <div class="x"><button class="btn" id="keyClear">クリア</button><button class="btn" id="keyTest">🔌 接続テスト</button><button class="btn cy" id="keySave">この端末に保存</button></div>
+  </div></div>
+
+  <div class="modal" id="outModal"><div class="card">
+    <h3 id="outTitle"></h3><p id="outDesc"></p>
+    <textarea id="outArea" spellcheck="false"></textarea>
+    <div class="x"><button class="btn" id="outDl">⬇ ファイルで保存</button><button class="btn cy" id="outCopy">📋 コピー</button></div>
+  </div></div>
+
+  <div class="modal" id="helpModal"><div class="card help-card">
+    <h3>📖 書き方ガイド（迷ったとき）</h3>
+    <p>各欄に「何を・どう書くか」の早見表です。完璧でなくてOK。まず埋めて、右で形を見ながら直しましょう。</p>
+
+    <div class="board">
+      <h5>🧭 各タブ・ボタンの使い方</h5>
+      <ul>
+        <li><span class="k">preset</span> ひな形を選ぶと、その構成で一式が入ります（研修サンプル／業種／マネーフォワード公式テンプレ等）。</li>
+        <li><span class="k">📖 書き方ガイド</span> 今ひらいているコレ。各欄の書き方。</li>
+        <li><span class="k">⚙️ AIの鍵</span> 自分のAPIキーを保存・接続テスト（任意・空でも全機能OK）。</li>
+        <li><span class="k">🤖 AI再現プロンプト</span> 本書をAIに渡して実装させる指示書を書き出し。</li>
+        <li><span class="k">{ } JSON</span> 構造化データで書き出し（再取り込み可）。</li>
+        <li><span class="k">📋 Markdown</span>／<span class="k">⬇ .md</span> Markdownでコピー／保存。</li>
+        <li><span class="k">⬇ .html</span> 単体HTMLで保存（オフライン閲覧）。</li>
+        <li><span class="k">⬇ .docx</span>／<span class="k">⬇ .xlsx</span> 本物のWord／Excel（オンライン時）。</li>
+        <li><span class="k">🖨 印刷/PDF</span> ブラウザ印刷でPDF化。</li>
+        <li><span class="k">一時保存</span>／<span class="k">復元</span> 書きかけを退避・呼び戻し。</li>
+        <li><span class="k">ひな形</span> 自分の型を保存・読込・DL・一括で共有。</li>
+        <li><span class="k">🐞 ログ</span> エラー時だけ出ます。内容をコピーして相談に。</li>
+      </ul>
+    </div>
+
+    <div class="rule"><b>うさうさ流・3つの基本</b>
+    <ul>
+      <li><b>事実と所感を分ける</b>：確認できたこと＝事実、意見＝所感。</li>
+      <li><b>たとえ話は「※不正確」と明記</b>（理解の補助であって仕様ではない）。</li>
+      <li><b>固有名は出さず役職名で。ウソは書かない</b>（捏造統計・架空引用なし）。</li>
+    </ul></div>
+
+    <h4>1. 背景と目的（WHY）</h4>
+    <p>「誰の・どんな困りごとを・なぜ今」を1〜3文で。迷ったら「これが無いと困る人は誰？」から。</p>
+    <span class="ex">例）配布や引き継ぎに手間がかかっている。単体化して配布・運用コストを下げる。</span>
+
+    <h4>2. ステークホルダー</h4>
+    <p>役割／関心事の2列。立場ごとに「気にしていること」を一言で。</p>
+    <span class="ex">運用担当／保守の容易さ　　利用者／安定して使えること</span>
+
+    <h4>3. スコープ（やる／やらない）</h4>
+    <p>「やらない」を書くと範囲がブレません。別案件・将来対応はここへ。</p>
+    <span class="ex">やる：単体での提供　／　やらない：認証基盤の自前実装（別案件）</span>
+
+    <h4>4. 用語定義</h4>
+    <p>略語・社内語など、読み手が迷う言葉だけでOK。</p>
+
+    <h4>5. 機能要件 FR ＋ 受入基準（GWT）</h4>
+    <p>ID（FR-01…）／要件（〜できる）／優先度／受入基準。受入基準は<b>Given（前提）・When（操作）・Then（結果）</b>の型で。</p>
+    <span class="ex">Given ログイン済み, When 保存を押す, Then ファイルが保存される</span>
+    <p>優先度の目安：<b>Must</b>＝無いと不可／<b>Should</b>＝重要だが代替可／<b>Could</b>＝あれば良い／<b>Won't</b>＝今回やらない。</p>
+
+    <h4>6. 非機能要件 NFR</h4>
+    <p>カテゴリ（性能・セキュリティ・可用性…）／要件／<b>指標・目標は数値で</b>。</p>
+    <span class="ex">性能／一覧表示の速さ／p95 500ms 以内</span>
+
+    <h4>7. 制約・前提・リスク</h4>
+    <p>制約＝変えられない枠。前提＝成り立つと仮定すること。リスク＝起きたら困ること＋<b>対応</b>もセットで。</p>
+
+    <h4>8. アーキ概要・構成図・設計判断 ADR</h4>
+    <p>ADRのコツは<b>「なぜそれにしたか＋選ばなかった代替案」</b>を書くこと。後から「なぜ？」に答えられます。</p>
+    <span class="ex">判断：document.write方式　理由：iframeが環境でブロックされるため
+代替：iframe → 不採用（読み込み制限）</span>
+
+    <h4>9. モジュール／データ／API</h4>
+    <p>モジュール：名前・入力・出力・例外・概要（擬似コードでOK）。API：メソッド・パス・要求・応答・ステータス（200/401…）。</p>
+
+    <h4>10. テスト観点 ＆ トレーサビリティ</h4>
+    <p>テストの「対応FR」に<b>FR番号</b>を書くと、上の帯が緑（紐付け漏れなし）になります。複数可・未紐付けは黄色で警告。</p>
+    <span class="ex">対応FR：FR-01,03</span>
+
+    <h4>11. 仕上げ（AI再現・TBD）</h4>
+    <p>「🤖 AI再現プロンプト」で、本書を渡して実装させる指示書を書き出せます。決めきれない点は<b>TBD（未決）</b>に正直に残すと後で迷いません。</p>
+
+    <div class="ramen"><b>🍜 うさうさラーメン店のたとえ（※不正確）</b><br>
+    要件定義＝「どんな一杯を誰に出すか」、設計＝「厨房の動線とレシピ」。メニュー（FR）と味の基準（NFR）を先に決めると、作る人が迷いません。</div>
+
+    <div class="board">
+      <h5>💡 なぜ書くのか</h5>
+      <ul>
+        <li><b>あとで困らないため。</b>口頭は消えるが、書けば<b>残る・渡せる・再現できる</b>。</li>
+        <li><b>事実と所感を分ける</b>のは、読み手が「決定」と「意見」を取り違えないため。</li>
+        <li><b>FRに受入基準(GWT)</b>を書くのは、「できた」の基準が人でブレないため。</li>
+        <li><b>トレーサビリティ</b>は、テスト漏れのFRを早く見つけるため（帯が黄色＝注意）。</li>
+        <li><b>TBD（未決）を残す</b>のは、隠すと後で事故るから。正直に書くと安全。</li>
+        <li><b>AIに渡せる粒度</b>で書くと、実装〜自動テストまで任せられる。</li>
+      </ul>
+    </div>
+
+    <div class="board">
+      <h5>🎯 ワンポイントレッスン</h5>
+      <ul>
+        <li>まず1行でOK。背景は「<b>これが無いと困る人は誰？</b>」から。</li>
+        <li>優先度は <b>Must/Should/Could/Won't</b>。「今回やらない」と決めるのも立派な設計。</li>
+        <li>NFRは<b>数値で</b>（「速い」ではなく「p95 500ms」）。</li>
+        <li>ADRは<b>選ばなかった案</b>を書くと、議論が蒸し返らない。</li>
+        <li>例外は握り潰さず<b>ログに</b>。失敗は「実装のバグ」か「テストの誤り」を切り分け。</li>
+        <li>迷ったら <b>🍜 うさうさラーメン店</b> のたとえに戻る（※不正確）。</li>
+      </ul>
+    </div>
+
+    <div class="x"><button class="btn cy" id="helpClose">とじる</button></div>
+  </div></div>
+
+  <button id="errBtn" style="display:none;position:fixed;right:16px;bottom:16px;z-index:60;background:#ffe3ea;color:#c2455c;border:1px solid #ffb3c2;border-radius:12px;padding:8px 12px;font-family:var(--mono);font-size:12px;cursor:pointer;box-shadow:0 6px 16px rgba(255,150,180,.4)">🐞 ログ</button>
+
+  <div class="modal" id="errModal"><div class="card">
+    <h3>🐞 エラーログ</h3>
+    <p>このセッションで起きたエラーを記録します（端末内のみ・外部送信なし）。下のテキストを選択してコピーし、相談時に貼り付けできます。</p>
+    <textarea id="errArea" spellcheck="false" readonly></textarea>
+    <div class="x"><button class="btn" id="errClear">🧹 クリア</button><button class="btn cy" id="errCopy">📋 コピー</button></div>
+  </div></div>
+
+  <div class="toast" id="toast"></div>
+
+<script>
+"use strict";
+var VERSION="2.0.0 PRO", STAMP="2026-06-13";
+function bhash(s){var h=5381,i=0;for(;i<s.length;i++){h=((h<<5)+h+s.charCodeAt(i))>>>0;}return ("000000"+h.toString(16)).slice(-6);}
+
+/* ---------------- presets ---------------- */
+function preset(type){
+  if(type==="mobile")return bMobile();
+  if(type==="cli")return bCli();
+  if(type==="etl")return bEtl();
+  if(type==="internal")return bInternal();
+  if(type==="suite_new_a")return sNewA();
+  if(type==="suite_new_b")return sNewB();
+  if(type==="suite_mid_a")return sMidA();
+  if(type==="suite_mid_b")return sMidB();
+  if(type==="blank_pro")return blankModel(preset("artifact"));
+  if(type==="blank_new_a")return blankModel(preset("suite_new_a"));
+  if(type==="blank_new_b")return blankModel(preset("suite_new_b"));
+  if(type==="blank_mid_a")return blankModel(preset("suite_mid_a"));
+  if(type==="blank_mid_b")return blankModel(preset("suite_mid_b"));
+  if(type==="blank_webapi")return blankModel(preset("webapi"));
+  if(type==="blank_mobile")return blankModel(preset("mobile"));
+  if(type==="blank_cli")return blankModel(preset("cli"));
+  if(type==="blank_etl")return blankModel(preset("etl"));
+  if(type==="blank_internal")return blankModel(preset("internal"));
+  if(type==="mf")return mfSample();
+  if(type==="blank_mf")return blankModel(mfSample());
+  if(type==="mf_proposal")return mfProposal();
+  if(type==="blank_mf_proposal")return blankModel(mfProposal());
+  if(type==="mf_webscreen")return mfWebscreen();
+  if(type==="blank_mf_webscreen")return blankModel(mfWebscreen());
+  if(type==="mf_appspec")return mfAppspec();
+  if(type==="blank_mf_appspec")return blankModel(mfAppspec());
+  if(type==="webapi") return {
+    meta:{title:"注文管理サービス 要件定義書 兼 詳細設計書",version:VERSION,date:STAMP,author:"設計担当",status:"レビュー中",ptype:"Web API（REST／バックエンド）"},
+    bg:"既存の手作業による注文処理を、REST APIで標準化・自動化する。本書はAIが読めば再現実装できる粒度で要件と設計を記す。",
+    stakeholders:[["プロダクト責任者","業務の自動化と指標可視化"],["運用担当","安定稼働と障害対応のしやすさ"],["連携先システム","明確なAPI契約"]],
+    scopeIn:["注文のCRUD API","在庫引当の整合性確保","認証(APIキー/JWT)","監査ログ"],
+    scopeOut:["フロントUI","決済代行の自前実装","BI/レポート基盤"],
+    terms:[["注文(Order)","顧客の購入要求の単位"],["引当","在庫を注文に割り当てる処理"],["冪等キー","二重処理を防ぐ一意キー"]],
+    fr:[["FR-01","注文を作成できる","Must","Given 有効な明細, When POST /orders, Then 201と注文IDを返す"],
+        ["FR-02","注文を取得できる","Must","Given 既存注文ID, When GET /orders/{id}, Then 200と注文を返す"],
+        ["FR-03","在庫不足は作成を拒否する","Must","Given 在庫不足, When POST /orders, Then 409を返し在庫は減らない"],
+        ["FR-04","冪等キーで二重作成を防ぐ","Should","Given 同一Idempotency-Key, When 再送, Then 同一結果を返す"]],
+    nfr:[["NFR-01","性能","p95レイテンシ","通常負荷で200ms以内"],
+         ["NFR-02","可用性","稼働率","月間99.9%"],
+         ["NFR-03","セキュリティ","認証必須・最小権限","全エンドポイントで認可、秘密は環境変数"],
+         ["NFR-04","可観測性","構造化ログ・トレース","相関IDを全ログに付与"]],
+    constraints:[["技術","言語/FWは社内標準に準拠"],["法務","個人情報は最小化・暗号化保存"]],
+    assumptions:["DBはマネージドRDBを利用","認証基盤は既存を流用"],
+    risks:[["在庫の競合","超過引当","行ロック＋トランザクションで整合"],["秘密情報の漏洩","重大インシデント","環境変数＋シークレット管理"]],
+    archNote:"レイヤード構成（API層→サービス層→リポジトリ層→DB）。外部連携はアダプタで隔離する。",
+    diagram:"[Client]→(API GW)→[App: API層→Service→Repository]→[(RDB)]\n                                   └→[Audit Log]\n外部: [在庫サービス] ← Adapter",
+    components:[["API層","コントローラ/ルータ","入出力・検証・認可"],["サービス層","ユースケース","業務ロジック・トランザクション境界"],["リポジトリ層","DataMapper","永続化の抽象化"],["連携","外部アダプタ","在庫サービス等の隔離"],["横断","ロガー/認証","相関ID・認可・監査"]],
+    dataflow:[["注文作成","API→Service(在庫引当)→Repository→DB→監査ログ"],["注文取得","API→Repository→DB→整形して返却"]],
+    extIf:[["在庫サービス","REST","在庫照会・引当（タイムアウト/リトライ）"],["RDB","SQL","永続化（トランザクション）"]],
+    adr:[["ADR-01","ID採番","UUIDv7","分散採番に強い。代替:連番→不採用(衝突/予測)"],["ADR-02","冪等性","Idempotency-Key保存","二重作成防止。代替:なし→不採用(再送事故)"]],
+    modules:[["createOrder(dto, idemKey)","注文DTO・冪等キー","注文 or エラー","在庫不足→Conflict, 重複→既存返却","検証→引当(行ロック)→保存→監査"],
+             ["getOrder(id)","注文ID","注文 or NotFound","存在しない→404","Repository.findById→整形"]],
+    data:[["orders.id","RDB(orders)","UUID","PK","注文ID"],["orders.status","RDB(orders)","ENUM","NOT NULL","created/paid/cancelled"],["idem_keys.key","RDB(idem_keys)","string","UNIQUE","冪等キー"]],
+    api:[["POST","/orders","{items:[{sku,qty}]} + Idempotency-Key","{id,status}","201/400/401/409"],
+         ["GET","/orders/{id}","-","{id,items,status}","200/401/404"]],
+    sequence:"Client → API: POST /orders (Idempotency-Key)\nAPI → Service: createOrder(dto,key)\nService → Repo: 在庫引当(行ロック)\nRepo → DB: UPDATE stock / INSERT order\nService → Audit: 記録\nAPI → Client: 201 {id,status}",
+    errors:[["検証エラー","入力バリデーション","400 + 詳細"],["未認証","認可ミドルウェア","401"],["在庫不足","引当処理","409"],["未処理例外","グローバルハンドラ","500 + 相関IDログ"]],
+    security:["全エンドポイントで認可","秘密は環境変数/シークレット管理","入力検証とSQLパラメータ化","監査ログに相関ID","個人情報は最小化・暗号化"],
+    logging:["構造化ログ(JSON)","相関ID(リクエスト単位)を全ログへ","監査:作成/変更/削除","保持期間と分離(情報/エラー)"],
+    env:[["DB_URL","postgres://...","接続文字列"],["API_KEY_SALT","(秘密)","APIキー検証用"],["LOG_LEVEL","info","ログ閾値"],["VERSION/STAMP","v1.0.0 / 2026-06-12","版数統一"]],
+    tests:[["単体","業務ロジック/分岐","FR-03"],["契約","API入出力スキーマ","FR-01,02"],["結合","DBトランザクション/引当","FR-03"],["冪等性","同一キー再送","FR-04"],["負荷","p95レイテンシ","NFR-01"],["セキュリティ","認可/入力検証","NFR-03"]],
+    tbd:[["TBD-1","レート制限の方式","固定窓/トークンバケット要検討"],["TBD-2","在庫サービス障害時の縮退","暫定:作成拒否+リトライ"]],
+    rev:[["v1.0.0",STAMP,"要件定義＋基本設計＋詳細設計を統合"]],
+    refs:["社内APIガイドライン","RDBスキーマ定義","在庫サービスIF仕様"],
+    repro:"本書だけで、レイヤ構成・主要モジュールの入出力/例外・データ設計・API契約・例外設計・テスト観点が再構築できることを意図する。"
+  };
+  if(type==="empty") return {
+    meta:{title:"",version:"",date:"",author:"",status:"",ptype:""},
+    bg:"",
+    stakeholders:[["",""],["",""],["",""]],
+    scopeIn:["","","",""],scopeOut:["",""],
+    terms:[["",""],["",""],["",""]],
+    fr:[["FR-01","","Must",""],["FR-02","","Must",""],["FR-03","","Should",""]],
+    nfr:[["NFR-01","","",""],["NFR-02","","",""],["NFR-03","","",""],["NFR-04","","",""]],
+    constraints:[["",""],["",""]],assumptions:["",""],risks:[["","",""],["","",""]],
+    archNote:"",diagram:"",
+    components:[["","",""],["","",""],["","",""],["","",""],["","",""]],
+    dataflow:[["",""],["",""]],extIf:[["","",""],["","",""]],
+    adr:[["ADR-01","","",""],["ADR-02","","",""]],
+    modules:[["","","","",""],["","","","",""],["","","","",""]],
+    data:[["","","","",""],["","","","",""],["","","","",""]],
+    api:[["","","","",""],["","","","",""],["","","","",""]],sequence:"",
+    errors:[["","",""],["","",""],["","",""],["","",""]],
+    security:["","","","",""],logging:["","","",""],
+    env:[["","",""],["","",""],["","",""],["","",""]],
+    tests:[["","",""],["","",""],["","",""],["","",""],["","",""],["","",""]],
+    tbd:[["TBD-1","",""],["TBD-2","",""]],rev:[["v1.0.0",STAMP,""]],refs:["","",""],repro:""
+  };
+  /* default: artifact (matches the uploaded reproducible spec) */
+  return {
+    meta:{title:"うさうさ海辺の学校 まるごとスイート PRO 要件定義書 兼 詳細設計書",version:VERSION,date:STAMP,author:"サブ講師",status:"レビュー中",ptype:"クライアント完結の単体HTMLアーティファクト（まるごとスイート PRO・5教室）"},
+    bg:"研修の道具（学習・図解・論文・PoC・報連相）を1つのHTMLファイルに集約し、配布・オフライン運用・引き継ぎのコストを下げる。AIが本書を読めば成果物を再現できる粒度で記す。",
+    stakeholders:[["研修運営","配布と保守の容易さ"],["受講者","オフラインで安定動作"],["保守担当","引き継ぎとゼロバグ確認"]],
+    scopeIn:["単体HTML1ファイルでの提供","オフライン動作","AI機能（キー設定時の任意）","保存(Excel/Word/CSV/PDF/MD/PPT/PNG)"],
+    scopeOut:["自前サーバ","認証基盤","永続DB（クライアント記憶域のみ）"],
+    terms:[["アーティファクト","配布する1枚のHTML"],["教室(tool)","各単機能HTML(harness/zukai/ronbun/poc/hou)"],["TOOLS","ハブが内包する5教室のbase64辞書{harness,zukai,ronbun,poc,hou}"],["注入","共通機能を教室HTMLへ差し込む処理(buildToolDoc)"],["ランタイムAPI","window.__USAUSA_SUITE__ 経由の外部操作面"]],
+    fr:[["FR-01","カード/ハッシュで教室を開ける","Must","Given ホーム, When カード押下, Then 該当教室がdocument.writeで開く"],
+        ["FR-02","MECEの3段導線を提供","Must","Given ホーム, Then まなぶ→つたえる→すすめるの3群に分類表示"],
+        ["FR-03","全教室/ホームへ回遊できる","Must","Given 任意の教室, When メニュー選択, Then hash遷移で目的UIへ"],
+        ["FR-04","APIキー設定と接続確認","Should","Given キー入力, When 接続確認, Then 200で接続OK/401でキー無効"],
+        ["FR-05","生成物をユーザ操作で保存できる","Must","Given 保存操作, When 保存パネルの⬇, Then ファイルが保存される"],
+        ["FR-06","エラー時のみログUIを表示","Should","Given エラー発生, Then 🐞ログが出現し一覧/コピー/クリア可"]],
+    nfr:[["NFR-01","可搬性","単体HTML・インストール不要","1ファイルで配布・起動"],
+         ["NFR-02","オフライン","主要機能が動作","外部依存ゼロ(生成libはオンライン時のみ)"],
+         ["NFR-03","セキュリティ","キーは端末内のみ・送信先は対象APIのみ","共有PCで使用後クリア"],
+         ["NFR-04","保守性","ゼロバグで版上げ","自動テスト全区分通過"],
+         ["NFR-05","アクセシビリティ","過度な動きを抑制","prefers-reduced-motion対応"]],
+    constraints:[["技術","教室本体はES5寄り構文。innerHTMLはエスケープ必須"],["運用","自動DL制限環境では保存パネルで担保"],["出力","PDFは印刷ベース(日本語はブラウザ描画)"]],
+    assumptions:["利用者はモダンブラウザを使用","ローカル実行時はキーを各自用意"],
+    risks:[["blob/iframeがブロック","教室が開けない","document.write方式を採用"],["自動DLが無効","保存できない","ユーザ操作の保存パネルで担保"],["キー露出","情報漏洩","端末内保存・使用後クリア"]],
+    archNote:"ハブ（ホーム）＋ 内包された複数教室。教室はビルド時にbase64でハブへ埋め込み、利用時にページ自体を置換して開く。",
+    diagram:"┌──── 単体HTML（ハブ）────┐\n│ ホーム(MECE 3段) + 共通群 │\n│ const TOOLS={harness,zukai,ronbun,poc,hou} //base64 │\n│ API/保存横取り/ログ/メニュー │\n└────────┬───────────────┘\n  card/#tool=KEY ↓ openTool\n decodeTool→buildToolDoc(注入)→document.write(置換)",
+    components:[["ハブ","ホーム/カード/グループ","MECE導線・教室起動"],["制御","decodeTool/buildToolDoc/openTool","復号・注入・ページ置換"],["連携","apiBootstrap/API設定","fetchへキー＆ヘッダー付与・接続確認"],["保存","DLモジュール","<a download>横取り→保存パネル"],["監視","ログモジュール","error/promise/console捕捉・🐞"],["回遊","メニュー","hash遷移で全UI"]],
+    dataflow:[["APIキー","API設定→localStorage→fetchパッチ→対象API"],["ファイル","教室がBlob生成→横取り→保存パネル→保存"],["ログ","例外→ログモジュール→sessionStorage+メモリ→🐞"]],
+    extIf:[["Anthropic Messages API","REST","AI生成（任意・キー設定時）"]],
+    adr:[["ADR-01","教室の持ち方","base64内包(単体化)","オフライン・1ファイル配布。代替:外部参照→不採用(サンドボックス)"],["ADR-02","教室の開き方","document.write置換","iframe/blobブロック回避。代替:iframe→不採用"],["ADR-03","保存","click横取り+保存パネル","自動DL制限対策。代替:自動DL→不採用"]],
+    modules:[["openTool(key)","key:教室キー","なし(画面置換)","try/catchでlogAdd+splash解除","splash→buildToolDoc→document.open/write/close"],
+             ["decodeTool(key)","key","UTF-8文字列","失敗時 'decode failed' をthrow","atob→Uint8Array→TextDecoder('utf-8')"],
+             ["buildToolDoc(html)","教室HTML","注入済みHTML","-","head:log→api / body:menu→bun を挿入、</scr+ipt>回避"],
+             ["apiBootstrap()","-","fetchラップ","二重適用防止(nf.__usausa)","対象ホスト宛にx-api-key等を付与"]],
+    data:[["usausa_api_key","localStorage","string","任意/クリア可","APIキー"],["usausa_errlog","sessionStorage","JSON配列","最大200件","エラーログ"],["__MEMKEY__","window(メモリ)","string","セッション","localStorage不可時の代替"],["TOOLS{...}","JS定数","base64×N","不変","各教室HTML"]],
+    api:[["POST","https://api.anthropic.com/v1/messages","{model,max_tokens,messages} + x-api-key/anthropic-version","{id,content[],usage}","200/400/401/429/500"]],
+    sequence:"ユーザ → ハブ: card/#tool=KEY\nハブ → 共通基盤: openTool(key)\n  → decodeTool: base64→UTF-8\n  → buildToolDoc: 注入(head:log→api / body:menu→bun)\n  → document.write: ページ置換\nハブ → ユーザ: 教室UI表示",
+    errors:[["実行時例外","window 'error'","ログ(error)+🐞表示"],["未処理Promise","'unhandledrejection'","ログ(promise)"],["復号失敗","decodeTool try/catch","'decode failed'+throw"],["API失敗","res.ok/catch","HTTP番号/CORSを表示"]],
+    security:["APIキーは端末内のみ保存","送信先は対象APIのみ","全innerHTML経路でエスケープ","外部スクリプト注入は連結で早期終了回避","共有PCでは使用後クリア"],
+    logging:["種別:error/promise/console","保存:sessionStorage(最大200件)+メモリ","操作:一覧/コピー/クリア","document.write跨ぎで同一セッション共有"],
+    env:[["APIキー","(未設定)","localStorage usausa_api_key"],["接続確認モデル","claude-sonnet-4-...","定数"],["ログ上限","200件","slice(-200)"],["revoke遅延","120000ms","Blob延命"],["VERSION/STAMP","v1.0.0 / 2026-06-12","5箇所統一"]],
+    tests:[["ホワイトボックス","全<script>静的構文","-"],["単体","base64往復一致","FR-01"],["API連携","ヘッダー付与・接続確認(200/401/例外)","FR-04"],["機能","MECE/回遊/保存/キー継続","FR-02,03,05"],["監視","エラー捕捉・🐞表示条件","FR-06"],["結合/システム","クリック→書換→正しい教室","FR-01"],["モンキー","無効キー/乱打で例外なし","-"]],
+    tbd:[["TBD-1","本物の.pdfバイナリ(日本語埋込)","現状は印刷PDF。要望時に別途"],["TBD-2","恒久監査(Webhook送信)","logAddフックで拡張可"]],
+    rev:[["v1.5.0","","エラーログ"],["v1.7.0","","遊び心（学習うさぎ・蟹/カモメ/貝）"],["v1.8.0","","うさぎ各教室・季節デコ・タップ応援"],["v1.8.1 PRO","2026-06-12","商用テスト166項目ゼロバグ・刻印"]],
+    refs:["Anthropic Messages API 仕様（エンドポイント／ヘッダー）","本成果物：まるごとスイート PRO v1.8.1（単体HTML）","新人向け／中堅向け 仕様書（前半・後半）","jsdom テストスイート（166項目・全区分）"],
+    repro:"本書だけで、TOOLS内包→decodeTool→buildToolDoc(注入順 head:log→api / body:menu→bun)→document.write が再構築できることを意図する。"
+  };
+}
+/* ---------- industry built-in templates ---------- */
+function skel(ov){
+  var base={
+    meta:{title:"",version:VERSION,date:STAMP,author:"設計担当",status:"ドラフト",ptype:""},
+    bg:"",stakeholders:[["プロダクト責任者","成果と品質"],["運用担当","安定稼働と障害対応"]],
+    scopeIn:[""],scopeOut:[""],terms:[["",""]],
+    fr:[["FR-01","","Must",""]],nfr:[["NFR-01","","",""]],
+    constraints:[["技術","社内標準に準拠"],["法務","個人情報は最小化・暗号化"]],assumptions:["モダンな実行環境を前提","秘密情報は秘密管理で扱う"],
+    risks:[["","",""]],
+    archNote:"",diagram:"",components:[["","",""]],dataflow:[["",""]],extIf:[["","",""]],adr:[["ADR-01","","",""]],
+    modules:[["","","","",""]],data:[["","","","",""]],api:[["","","","",""]],sequence:"",
+    errors:[["入力エラー","バリデーション","利用者向けメッセージ"],["未処理例外","グローバルハンドラ","ログ＋汎用エラー"]],
+    security:["最小権限","秘密は環境変数/秘密管理","入力検証","通信の暗号化"],
+    logging:["構造化ログ(JSON)","相関ID","重要操作の監査","保持期間とローテーション"],
+    env:[["LOG_LEVEL","info","ログ閾値"],["VERSION/STAMP","v1.0.0 / 2026-06-12","版数統一"]],
+    tests:[["単体","主要ロジック","FR-01"]],
+    tbd:[["TBD-1","",""]],rev:[["v1.0.0",STAMP,"初版"]],refs:[""],
+    repro:"本書だけで主要構成・モジュール・データ・IF・テスト観点が再構築できることを意図する。"
+  };
+  return Object.assign(base,ov);
+}
+function bMobile(){return skel({
+  meta:{title:"モバイルアプリ 要件定義書 兼 詳細設計書",version:VERSION,date:STAMP,author:"設計担当",status:"ドラフト",ptype:"ネイティブ／クロスプラットフォーム モバイルアプリ"},
+  bg:"利用者がスマートフォンから主要業務を完結できるモバイルアプリを提供する。オフライン耐性と端末内データ保護を重視する。",
+  scopeIn:["ログイン/サインアップ","主要データのオフライン閲覧","プッシュ通知","端末内セキュアストレージ"],scopeOut:["管理用Web","決済代行の自前実装"],
+  terms:[["セッション","ログイン状態"],["セキュアストレージ","Keychain/Keystore"],["同期","ローカルDBとサーバの差分反映"]],
+  fr:[["FR-01","メール/パスワードでログインできる","Must","Given 正しい資格情報, When ログイン, Then ホームへ遷移しトークンを安全保存"],
+      ["FR-02","オフラインでも直近データを閲覧できる","Should","Given 圏外, When 一覧表示, Then ローカルキャッシュから表示"],
+      ["FR-03","プッシュ通知を受信できる","Should","Given 許可済み, When 配信, Then 端末に表示しタップで該当画面へ"],
+      ["FR-04","ログアウトで端末内の資格情報を消去する","Must","Given ログアウト, Then トークン/個人情報を端末から削除"]],
+  nfr:[["NFR-01","性能","起動時間","コールドスタート2秒以内"],["NFR-02","対応端末","OS範囲","iOS/Android 現行2世代"],["NFR-03","セキュリティ","資格情報の保護","Keychain/Keystoreに暗号化保存"],["NFR-04","アクセシビリティ","スクリーンリーダー","主要画面でラベル付与"]],
+  risks:[["端末紛失","資格情報漏洩","セキュアストレージ＋遠隔ログアウト"],["OS差","表示崩れ","対応端末で受入テスト"]],
+  archNote:"プレゼン層(UI)→ドメイン層(UseCase)→データ層(API/ローカルDB)。オフラインはローカルDBをソースに同期する。",
+  diagram:"[UI 画面]→[UseCase/ViewModel]→[Repository]\n   Repository →(API) / (ローカルDB cache)\n   Push: [OS通知]→[アプリ]→[該当画面]",
+  components:[["UI","画面/ナビゲーション","表示・入力・遷移"],["ドメイン","UseCase/ViewModel","状態・業務ロジック"],["データ","Repository","API/ローカルDBの抽象化"],["基盤","認証/通知/セキュアストレージ","横断機能"]],
+  dataflow:[["ログイン","UI→UseCase→API→トークンをセキュアストレージ"],["オフライン閲覧","UI→Repository→ローカルDB→表示"]],
+  extIf:[["バックエンドAPI","REST/GraphQL","データ取得・更新"],["プッシュ基盤","APNs/FCM","通知配信"]],
+  adr:[["ADR-01","状態管理","単方向データフロー","予測可能。代替:双方向→不採用"],["ADR-02","オフライン","ローカルDB＋同期","圏外対応。代替:都度通信→不採用"]],
+  modules:[["login(email,pw)","資格情報","トークン or エラー","認証失敗→メッセージ","API認証→セキュアストレージ保存"],["syncCache()","-","更新件数","競合→サーバ優先","差分取得→ローカルDB反映"]],
+  data:[["auth_token","セキュアストレージ","string","端末内/暗号化","アクセストークン"],["cache.*","ローカルDB","各種","端末内","オフライン用キャッシュ"]],
+  api:[["POST","/auth/login","{email,password}","{token,user}","200/400/401"],["GET","/items?since=","-","{items[]}","200/401"]],
+  sequence:"UI → UseCase: login\nUseCase → API: POST /auth/login\nAPI → UseCase: token\nUseCase → SecureStore: 保存\nUI ← UseCase: ホームへ",
+  security:["資格情報はKeychain/Keystoreに暗号化保存","通信はTLS","ログアウトで端末内データ消去","最小権限の権限要求"],
+  tests:[["単体","UseCase/Repository","FR-01,02"],["UI","主要画面の表示/遷移","FR-01,03"],["オフライン","圏外時のキャッシュ表示","FR-02"],["セキュリティ","ログアウトで資格情報消去","FR-04"]],
+  tbd:[["TBD-1","生体認証の採用","端末対応状況を調査"]],refs:["プラットフォームのHIG/Material","バックエンドAPI仕様"],
+  repro:"本書だけで、層構成・主要UseCase/Repository・オフライン同期・認証/通知連携が再構築できることを意図する。"});}
+function bCli(){return skel({
+  meta:{title:"CLIツール／バッチ 要件定義書 兼 詳細設計書",version:VERSION,date:STAMP,author:"設計担当",status:"ドラフト",ptype:"コマンドラインツール／定期バッチ"},
+  bg:"運用作業を自動化するCLI／バッチを提供する。冪等性・再実行性・明確な終了コードを重視する。",
+  scopeIn:["サブコマンド","設定ファイル/環境変数","ドライラン","構造化ログ/終了コード"],scopeOut:["GUI","常駐デーモン"],
+  terms:[["終了コード","0=成功 / 非0=失敗"],["冪等","同入力で同結果・再実行安全"],["チェックポイント","再開位置の記録"]],
+  fr:[["FR-01","サブコマンドで処理を実行できる","Must","Given 引数, When 実行, Then 処理し終了コードを返す"],
+      ["FR-02","--dry-run で副作用なく確認できる","Should","Given --dry-run, Then 変更せず予定を出力"],
+      ["FR-03","失敗時は非ゼロ終了コードと原因を出す","Must","Given エラー, Then 非0コード＋stderrに原因"],
+      ["FR-04","再実行しても安全（冪等）","Should","Given 同入力で再実行, Then 二重適用しない"]],
+  nfr:[["NFR-01","性能","処理時間","1万件を1分以内"],["NFR-02","可搬性","対応OS","Linux/macOS"],["NFR-03","可観測性","ログ","構造化ログ＋進捗"],["NFR-04","信頼性","冪等/再実行","チェックポイント"]],
+  risks:[["途中失敗","部分適用","チェックポイント＋再開"],["設定ミス","誤実行","--dry-run/確認プロンプト"]],
+  archNote:"引数パーサ→コマンド実行→I/Oアダプタ(ファイル/DB/API)。共通でロガー/設定/終了コードを管理する。",
+  diagram:"argv → [Parser] → [Command] → [Adapter: file/DB/API]\n              └ Logger / Config / ExitCode",
+  components:[["CLI","引数パーサ","サブコマンド/オプション解釈"],["コマンド","実処理","ユースケース実行"],["アダプタ","I/O","ファイル/DB/API"],["共通","ロガー/設定/終了コード","横断"]],
+  dataflow:[["実行","argv→Parser→Command→Adapter→結果/終了コード"],["設定","環境変数/設定ファイル→Config→各処理"]],
+  extIf:[["ファイル/標準入出力","I/O","入力/結果"],["DB/API","任意","対象データ"]],
+  adr:[["ADR-01","設定優先順位","引数>環境変数>設定ファイル","明確化。代替:逆順→不採用"],["ADR-02","冪等性","処理キー＋チェックポイント","再実行安全。代替:なし→不採用"]],
+  modules:[["run(args)","引数","終了コード","例外→非0コード","パース→コマンド選択→実行"],["process(batch)","入力集合","結果/件数","部分失敗→集計","チャンク処理＋チェックポイント"]],
+  data:[["checkpoint","ファイル/DB","JSON","再開用","進捗/最後の成功位置"],["config","ファイル/環境変数","各種","起動時","設定値"]],
+  api:[["CMD","tool run --input X --dry-run","引数/標準入力","標準出力/終了コード","0 / 非0"]],
+  sequence:"argv → Parser: 解釈\nParser → Command: run\nCommand → Adapter: 入出力\nCommand → Logger: 進捗\nProcess → ExitCode: 0 or 非0",
+  errors:[["引数不正","パーサ","非0＋usage表示"],["I/O失敗","アダプタ","リトライ/非0＋原因"],["途中失敗","実行","チェックポイント保存＋非0"]],
+  env:[["CONFIG","./config.yaml","設定ファイル"],["LOG_LEVEL","info","ログ閾値"],["DRY_RUN","false","ドライラン既定"]],
+  tests:[["単体","引数パース/分岐","FR-01"],["ドライラン","副作用なし","FR-02"],["終了コード","失敗時非0","FR-03"],["冪等性","再実行で二重適用なし","FR-04"]],
+  tbd:[["TBD-1","並列度の上限","リソースから決定"]],refs:["社内CLIガイドライン","対象データ仕様"],
+  repro:"本書だけで、引数仕様・サブコマンド・冪等/再開・終了コード・ログが再構築できることを意図する。"});}
+function bEtl(){return skel({
+  meta:{title:"データ基盤／ETLパイプライン 要件定義書 兼 詳細設計書",version:VERSION,date:STAMP,author:"設計担当",status:"ドラフト",ptype:"バッチ/ストリーミングのデータパイプライン"},
+  bg:"複数ソースのデータを取り込み、変換・品質保証して分析基盤に提供する。再現性とデータ品質を重視する。",
+  scopeIn:["抽出(Extract)","変換(Transform)","ロード(Load)","データ品質チェック","スケジューリング/再実行"],scopeOut:["BIダッシュボード","MLモデル学習"],
+  terms:[["冪等ロード","同データで重複しない取込"],["スキーマ","データ構造の定義"],["DQ","Data Quality（品質）"],["系統","データの流れ(lineage)"]],
+  fr:[["FR-01","ソースからデータを抽出できる","Must","Given 接続情報, When 抽出, Then 生データをステージに保存"],
+      ["FR-02","変換ルールで整形できる","Must","Given 生データ, When 変換, Then 仕様どおりの整形データ"],
+      ["FR-03","品質チェック失敗で停止/隔離する","Must","Given DQ違反, Then 当該レコードを隔離し通知"],
+      ["FR-04","再実行しても重複しない（冪等ロード）","Must","Given 同バッチ再実行, Then 重複行を作らない"]],
+  nfr:[["NFR-01","性能","スループット","日次1億行を時間内"],["NFR-02","信頼性","再実行/再現性","バッチIDで冪等"],["NFR-03","データ品質","DQ合格率","99.9%以上"],["NFR-04","可観測性","系統/監視","ジョブ状態と行数を記録"]],
+  risks:[["スキーマ変更","変換失敗","スキーマ検証＋アラート"],["重複ロード","集計が狂う","冪等キー/MERGE"]],
+  archNote:"Extract→Stage→Transform→DQ→Load(DWH)。オーケストレータがDAGで依存と再実行を管理する。",
+  diagram:"[Source]→Extract→[Stage]→Transform→[DQ]→Load→[(DWH)]\n              Orchestrator(DAG) / Lineage / Alert",
+  components:[["抽出","Extractor","ソース接続・取得"],["変換","Transformer","整形・結合・集計"],["品質","DQチェック","検証・隔離"],["ロード","Loader","DWHへ冪等投入"],["基盤","オーケストレータ","DAG/再実行/監視"]],
+  dataflow:[["日次バッチ","Source→Stage→Transform→DQ→DWH"],["失敗時","DQ違反→隔離テーブル→通知"]],
+  extIf:[["データソース","DB/API/ファイル","抽出元"],["DWH","SQL","ロード先"]],
+  adr:[["ADR-01","ロード方式","MERGE(冪等)","再実行安全。代替:INSERTのみ→不採用(重複)"],["ADR-02","オーケストレーション","DAG＋バッチID","依存/再現。代替:cron単発→不採用"]],
+  modules:[["extract(source,window)","接続/期間","ステージ件数","接続失敗→リトライ","増分抽出→ステージ"],["transform(stage)","生データ","整形データ","型不正→隔離","ルール適用・結合"],["load(batchId,data)","バッチID/データ","ロード件数","重複→MERGE吸収","冪等ロード"]],
+  data:[["stage.*","ステージ","生スキーマ","一時","抽出直後"],["dwh.fact_*","DWH","整形スキーマ","永続","分析用"],["dq_quarantine","DWH","隔離","永続","DQ違反レコード"]],
+  api:[["JOB","etl run --date=YYYY-MM-DD","日付/ソース","ジョブ状態/件数","成功/失敗"]],
+  sequence:"Orchestrator → Extract: 増分取得\nExtract → Stage: 保存\nTransform → DQ: 検証\nDQ → Load(MERGE): 冪等投入\n失敗 → 隔離 + Alert",
+  errors:[["抽出失敗","接続/タイムアウト","リトライ→停止＋通知"],["DQ違反","検証","隔離＋集計通知"],["ロード重複","MERGE","重複吸収(事故防止)"]],
+  env:[["SOURCE_DSN","(秘密)","抽出元接続"],["DWH_DSN","(秘密)","ロード先"],["BATCH_DATE","YYYY-MM-DD","対象日"]],
+  tests:[["単体","変換ルール","FR-02"],["DQ","違反検知/隔離","FR-03"],["冪等性","再実行で重複なし","FR-04"],["結合","E2E(抽出→ロード)","FR-01,02"]],
+  tbd:[["TBD-1","リアルタイム化","CDC/ストリーミング検討"]],refs:["ソース/DWHスキーマ定義","データ品質基準"],
+  repro:"本書だけで、ELTのDAG・各ステージI/O・DQ隔離・冪等ロードが再構築できることを意図する。"});}
+function bInternal(){return skel({
+  meta:{title:"社内業務システム 要件定義書 兼 詳細設計書",version:VERSION,date:STAMP,author:"設計担当",status:"ドラフト",ptype:"社内Web業務システム（CRUD＋認証＋権限）"},
+  bg:"社内の業務データを安全に登録・参照・更新できるWeb業務システムを提供する。権限管理と監査を重視する。",
+  scopeIn:["レコードのCRUD","ロールベース権限(RBAC)","検索/一覧/CSV出力","操作監査ログ"],scopeOut:["社外公開","モバイルアプリ"],
+  terms:[["RBAC","役割ベースのアクセス制御"],["監査ログ","誰が何をしたかの記録"],["SSO","シングルサインオン"]],
+  fr:[["FR-01","レコードを登録/参照/更新/削除できる","Must","Given 権限あり, When CRUD操作, Then 反映し監査に記録"],
+      ["FR-02","役割に応じて操作を制限する","Must","Given 閲覧のみ役割, When 更新, Then 403で拒否"],
+      ["FR-03","条件で検索しCSV出力できる","Should","Given 検索条件, When 出力, Then 該当をCSVでDL"],
+      ["FR-04","重要操作を監査ログに残す","Must","Given 作成/更新/削除, Then 操作者/日時/差分を記録"]],
+  nfr:[["NFR-01","セキュリティ","認証/認可","SSO＋RBAC・最小権限"],["NFR-02","可用性","稼働率","営業時間に99.9%"],["NFR-03","監査","証跡","改ざん検知可能なログ"],["NFR-04","保守性","変更容易性","層分離・テスト整備"]],
+  risks:[["権限設定ミス","情報漏洩","RBAC既定拒否＋レビュー"],["大量出力","負荷/漏洩","件数制限＋監査"]],
+  archNote:"画面→API(認可)→サービス→リポジトリ→DB。横断で認証/認可/監査を行う。",
+  diagram:"[画面]→[API(認可)]→[Service]→[Repository]→[(RDB)]\n              認証(SSO) / RBAC / 監査ログ",
+  components:[["画面","一覧/詳細/編集","表示・入力"],["API","コントローラ","検証・認可"],["サービス","ユースケース","業務ロジック・トランザクション"],["リポジトリ","DataMapper","永続化"],["横断","認証/RBAC/監査","セキュリティ"]],
+  dataflow:[["更新","画面→API(認可)→Service→DB→監査ログ"],["CSV出力","画面→API→検索→整形→CSV"]],
+  extIf:[["SSO/IdP","OIDC/SAML","認証"],["RDB","SQL","永続化"]],
+  adr:[["ADR-01","認可","RBAC＋既定拒否","安全側。代替:許可リスト手運用→不採用"],["ADR-02","監査","追記専用ログ","改ざん耐性。代替:更新可ログ→不採用"]],
+  modules:[["createRecord(dto,user)","入力/操作者","レコード/エラー","権限なし→403","認可→検証→保存→監査"],["search(query,user)","条件/操作者","一覧","権限で範囲制限","フィルタ→ページング"]],
+  data:[["records.*","RDB(records)","各種","NOT NULL等","業務レコード"],["audit_log","RDB(audit_log)","追記専用","改ざん検知","操作者/日時/差分"],["roles/permissions","RDB","マスタ","RBAC","役割と権限"]],
+  api:[["GET","/records?query=","-","{items[],page}","200/401/403"],["POST","/records","{...}","{id}","201/400/401/403"],["PUT","/records/{id}","{...}","{id}","200/401/403/404"],["DELETE","/records/{id}","-","{ok}","200/401/403/404"]],
+  sequence:"画面 → API: 操作\nAPI → 認可: ロール確認\n認可OK → Service → Repository → DB\nService → 監査ログ: 記録\nAPI → 画面: 結果",
+  errors:[["未認証","認証ミドルウェア","401"],["権限なし","認可","403"],["検証エラー","バリデーション","400＋詳細"],["未処理例外","ハンドラ","500＋相関IDログ"]],
+  security:["SSO＋RBAC(既定拒否)","最小権限","入力検証/パラメータ化","監査ログ(追記専用)","個人情報の最小化・暗号化"],
+  env:[["DB_URL","(秘密)","接続"],["OIDC_ISSUER","https://idp...","認証基盤"],["SESSION_TTL","8h","セッション"]],
+  tests:[["単体","業務ロジック","FR-01"],["認可","役割別の許可/拒否","FR-02"],["機能","検索/CSV出力","FR-03"],["監査","操作が記録される","FR-04"]],
+  tbd:[["TBD-1","行レベル権限","要件精査"]],refs:["社内認証(SSO)仕様","RBACポリシー"],
+  repro:"本書だけで、層構成・RBAC・主要CRUDモジュール・監査・データ設計が再構築できることを意図する。"});}
+/* ---------- マネーフォワード流 Design Doc（公式参考・独自サンプル） ---------- */
+function mfSample(){return {
+  meta:{title:"自動仕訳サジェスト機能 Design Doc（要件定義＋詳細設計）",version:VERSION,date:STAMP,author:"設計担当",status:"レビュー中（設計合意前）",ptype:"Design Doc（マネーフォワード流：背景・目的／参加者／設計の意図／リスクと対処）"},
+  bg:"クラウド会計で、連携した銀行口座の明細から推奨仕訳を提案し、記帳の手間と入力ミスを減らす。本Design Docはエピック着手前に作成し、チームで設計合意を形成するためのもの。トレードオフが生じる箇所と、コードだけでは追えない設計意図を中心に記し、影響範囲が小さく短命な詳細はPR/コードコメントに委ねる。",
+  stakeholders:[["プロダクトオーナー","価値仮説と優先度"],["開発チーム（スクラム）","設計合意と実装"],["SRE／セキュリティ","運用性・プライバシー"],["カスタマーサポート","障害時の影響と告知"]],
+  scopeIn:["明細ごとの推奨仕訳（勘定科目・税区分）の提示","採用/修正/却下の学習反映","低信頼スコア時は提案を抑止","提案・採否の監査ログ"],
+  scopeOut:["仕訳の全自動確定（人の承認を必須）","証憑画像のOCR取込（別エピック）","税務判断の代行"],
+  terms:[["明細","連携口座の入出金レコード"],["推奨仕訳","勘定科目・税区分・金額の提案"],["信頼スコア","提案の確からしさ(0–1)"],["Design Doc","設計意図と合意を残す軽量設計文書"]],
+  fr:[["FR-01","明細ごとに推奨仕訳を提示できる","Must","Given 連携明細, When 仕訳画面を開く, Then 勘定科目・税区分・信頼スコア付きで提案を表示"],
+      ["FR-02","提案を採用/修正/却下できる","Must","Given 提案表示, When 採用/修正/却下, Then 結果を保存し学習へ反映"],
+      ["FR-03","信頼スコアが閾値未満なら提案しない","Should","Given スコア<閾値, Then 提案を出さず手入力を促す"],
+      ["FR-04","提案と採否を監査ログに残す","Must","Given 提案/採否, Then 利用者・日時・入力・スコアを記録"]],
+  nfr:[["NFR-01","性能","提案応答","明細表示時にp95 500ms以内"],["NFR-02","プライバシー","金融データ保護","明細・口座情報は最小化・暗号化、目的外利用なし"],["NFR-03","可用性","縮退運用","推論基盤停止時は手入力にフォールバック"],["NFR-04","説明可能性","提案根拠","採用理由（過去仕訳/ルール）を提示可能"]],
+  constraints:[["技術","既存の1週間スプリント。エピック単位で本書を先行作成し合意後に着手"],["法務","金融・個人情報の取扱いは社内規程と関連法令に準拠"]],
+  assumptions:["口座連携と明細取得は既存基盤を利用","ユーザーの過去仕訳が一定量蓄積されている"],
+  risks:[["誤提案による誤記帳","会計の誤り","人の承認必須＋信頼スコア閾値＋却下の容易さ"],["金融データの漏洩","重大インシデント","最小権限・暗号化・アクセス監査・目的限定"],["推論基盤の障害","提案不可","手入力フォールバック＋監視・復旧手順（モニタープラン）"]],
+  archNote:"明細→特徴量化→推論（過去仕訳の近傍探索＋ルール）→推奨。確定は必ず人の承認を経る。低レイテンシのオンライン推論と、オフライン学習を経路分離する。トレードオフが生じる推論方式と確定フローの責務分担を本書で固定する。",
+  diagram:"[明細]→[特徴量化]→[推論(近傍探索+ルール)]→[推奨仕訳+スコア]\n        承認 →[確定仕訳]→[監査ログ]\n        採否 →[学習データ]（オフライン）",
+  components:[["UI","仕訳サジェスト","提案表示・採否操作"],["API","サジェストAPI","認可・整形・スコア閾値適用"],["推論","推奨エンジン","近傍探索＋ルール、信頼スコア算出"],["学習","フィードバック処理","採否を学習データへ（オフライン）"],["監査","監査ログ","提案・採否の追記専用記録"]],
+  dataflow:[["提案","明細→API(認可)→推論→推奨+スコア→UI"],["確定","UI承認→確定仕訳→監査ログ"],["学習","採否→キュー→オフライン学習"]],
+  extIf:[["口座連携基盤","内部API","明細取得"],["推論基盤","gRPC/REST","推奨の算出"],["会計コア","内部API","確定仕訳の登録"]],
+  adr:[["ADR-01","提案方式","過去仕訳の近傍探索＋ルールのハイブリッド","説明可能で初期データ少でも機能。代替:大規模MLのみ→学習データ不足と説明性低下で不採用"],
+       ["ADR-02","確定フロー","人の承認を必須（全自動確定しない）","誤記帳リスクと監査要件。代替:高スコアは自動確定→会計の誤りリスクで不採用"],
+       ["ADR-03","推論と学習の分離","オンライン推論／オフライン学習","低レイテンシと再現性。代替:オンライン逐次学習→不安定で不採用"],
+       ["ADR-04","低信頼時の挙動","閾値未満は非提示","誤誘導を避ける。代替:常に提示→誤採用増で不採用"]],
+  modules:[["suggest(meisaiId,user)","明細ID/操作者","推奨仕訳＋スコア or なし","権限なし→403／基盤停止→空+手入力","特徴量化→推論→閾値適用→監査"],
+           ["applyDecision(suggestId,decision,user)","提案ID/採否/操作者","確定 or 記録","競合→再取得(409)","採否保存→確定時は会計コアへ→監査＋学習キュー"]],
+  data:[["suggestion","RDB(suggestions)","各種","保持期間規定","明細ID・推奨・スコア・状態"],["audit_log","RDB(audit_log)","追記専用","改ざん検知","操作者・日時・入力・スコア・採否"],["feedback_queue","キュー","JSON","非同期","採否（オフライン学習用）"]],
+  api:[["GET","/suggestions?meisai=","-","{suggestion?,score}","200/204/401/403"],["POST","/suggestions/{id}/decision","{decision,patch?}","{ok,journalId?}","200/400/401/403/409"]],
+  sequence:"UI → API: GET /suggestions?meisai=…\nAPI → 推論: 特徴量化＋近傍/ルール\n推論 → API: 推奨+スコア（閾値適用）\nUI ← API: 提案（or 204）\nUI → API: POST decision（承認）\nAPI → 会計コア: 確定仕訳\nAPI → 監査ログ/学習キュー: 記録",
+  errors:[["未認証/権限なし","認証・認可","401/403"],["推論基盤停止","タイムアウト/失敗","204（提案なし）＋手入力、監視アラート"],["確定の競合","楽観ロック","409＋再取得を促す"],["検証エラー","入力検証","400＋詳細"]],
+  security:["金融・個人データは最小化し保存時/通信時に暗号化","最小権限とアクセス監査","目的限定（学習は同意・規程の範囲内）","提案・確定・採否を追記専用で監査","秘密情報は秘密管理で扱う"],
+  logging:["構造化ログ＋相関ID","提案率・採用率・スコア分布を計測","推論レイテンシ/失敗率を監視しアラート","障害時の検知と復旧手順を定義（モニタープラン）"],
+  env:[["INFER_ENDPOINT","(内部)","推論基盤"],["SCORE_THRESHOLD","0.7","提案抑止の閾値"],["AUDIT_RETENTION","規程に従う","監査保持"],["LOG_LEVEL","info","ログ閾値"]],
+  tests:[["単体","特徴量化/閾値/採否","FR-01,03"],["契約","サジェスト/決定API","FR-01,02"],["プライバシー","最小権限・暗号化・監査","NFR-02"],["障害","推論停止→手入力フォールバック","NFR-03"],["E2E","提案→承認→確定→監査","FR-01,02,04"]],
+  tbd:[["TBD-1","学習の同意取得フロー","法務・プライバシーと確定"],["TBD-2","信頼スコア閾値の最適値","本番データで調整"]],
+  rev:[["v1.0.0",STAMP,"エピック着手前の初版（設計合意用）。開発中の意思決定変更は随時反映、完了後アーカイブ"]],
+  refs:["Money Forward Developers Blog『Design Docsを活用して会計Plusの設計プロセスを改善した話』(2022-12-21) https://moneyforward-dev.jp/entry/2022/12/21/use-of-design-docs/","『Googleのソフトウェアエンジニアリング』(オライリー)","本書はDesign Doc流儀を参考にした独自サンプルで、公式テンプレートの複製ではありません"],
+  repro:"本書だけで、背景・目的／参加者／Goals・Non-Goals／設計の意図（なぜ＋代替案=ADR）／リスクと対処（セキュリティ・プライバシー・テスト/モニタープラン）が把握でき、エピックの設計合意と実装着手ができることを意図する。"
+};}
+
+/* ---------- マネーフォワード公式テンプレ：本来の見出し・項目・列のまま（カスタム構成） ---------- */
+function mfProposal(){return {
+  docNote:"アプリ開発 企画書（マネーフォワード公式テンプレ・項目そのまま）",
+  meta:{title:"アプリ開発 企画書",version:"1.0",date:STAMP,author:"（担当者）",status:"ドラフト",ptype:"アプリ開発 企画書（マネーフォワード公式テンプレ・記入例）"},
+  custom:[
+    {title:"企画概要",type:"kv",rows:[["アプリ名","まちめし"],["アプリ概要","近所の隠れた名店を発見できるグルメアプリ"],["コンセプト","地元の「美味しい」をつなぐ"],["ターゲット","外食好きの20〜30代"],["アプリの特長・強み","ローカル特化のレコメンドと住民レビュー"]]},
+    {title:"企画背景",type:"kv",rows:[["現在の市場・トレンド","ローカル体験・個人店人気の高まり"],["競合・ベンチマーク","大手グルメサイト（広域・広告偏重）"],["現状の問題点・課題","近所の良店が埋もれて見つけにくい"]]},
+    {title:"ターゲットユーザー",type:"kv",rows:[["年齢","20〜39"],["性別","不問"],["職業","会社員・学生"],["興味・関心","外食・食べ歩き"],["ニーズ","失敗しない店選び"],["ユーザーが持つ不満","レビューが広告的で当てにならない"]]},
+    {title:"機能一覧",type:"table",cols:["機能","詳細","特長","ユーザーメリット"],rows:[["近隣レコメンド","現在地から名店を提案","ローカル特化","探す手間が減る"],["住民レビュー","居住エリア認証付き投稿","信頼性","実体験で選べる"]]},
+    {title:"技術要件",type:"kv",rows:[["開発プラットフォーム","iOS / Android"],["使用する技術スタック","Flutter / REST / 地図API"]]},
+    {title:"開発スケジュール",type:"table",cols:["タスク","期日","担当者","備考"],rows:[["要件・設計","2026-07-31","企画担当","合意形成"],["実装","2026-09-30","開発担当","α版"],["テスト・公開","2026-10-31","QA","ストア申請"]]},
+    {title:"予算",type:"table",cols:["費用項目","費用","発注先"],rows:[["開発費","（見積）","開発委託先"],["デザイン費","（見積）","制作会社"]]},
+    {title:"戦略",type:"kv",rows:[["プロモーション戦略","ローカルSNS中心"],["プロモーション施策","地元店との共同キャンペーン"],["収益化方法","掲載課金・送客手数料"],["予想収益・コスト","（試算）"],["目標設定","半年でMAU目標達成"],["改善プラン","レビュー品質の継続改善"]]}
+  ],
+  refs:["マネーフォワード クラウド『アプリ開発 企画書』テンプレート（公式・無料）","本書は公式テンプレの項目構成に沿った記入例（値は一例）"]
+};}
+function mfWebscreen(){return {
+  docNote:"web 画面仕様書（マネーフォワード公式テンプレ・項目そのまま）",
+  meta:{title:"web 画面仕様書",version:"1.0",date:STAMP,author:"（担当者）",status:"ドラフト",ptype:"web 画面仕様書（マネーフォワード公式テンプレ・記入例）"},
+  custom:[
+    {title:"ページタイトル",type:"kv",rows:[["ページタイトル","ログイン画面"]]},
+    {title:"ワイヤーフレーム",type:"prose",ph:"画面レイアウトをASCII等で記述",text:"┌───────────────┐\n│      ロゴ       │\n│ [メールアドレス   ] │\n│ [パスワード      ] │\n│ [   ログイン    ] │\n│   パスワード再設定   │\n└───────────────┘"},
+    {title:"コンテンツ要素",type:"table",cols:["No","要素名","要素概要","操作時の挙動","サイズ","カラー","備考"],rows:[
+      ["1","ロゴ","サービスロゴ","クリックでトップへ","横120px","ブランド色","ヘッダー左"],
+      ["2","メール入力","メールアドレス欄","フォーカスで枠強調","幅100%","—","必須・形式検証"],
+      ["3","パスワード入力","パスワード欄","表示/非表示の切替","幅100%","—","必須"],
+      ["4","ログインボタン","送信ボタン","押下で認証→遷移","幅100%/高44px","プライマリ","活性/非活性あり"],
+      ["5","パスワード再設定","再設定導線","クリックで再設定画面へ","—","リンク色","補助導線"]
+    ]}
+  ],
+  refs:["マネーフォワード クラウド『web 画面仕様書』テンプレート（公式・無料）","本書は公式テンプレの項目（ページタイトル／ワイヤーフレーム／コンテンツ要素）に沿った記入例（値は一例）"]
+};}
+function mfAppspec(){return {
+  docNote:"スマホアプリ 仕様書（マネーフォワード公式テンプレ・項目そのまま）",
+  meta:{title:"スマホアプリ 仕様書",version:"1.0",date:"2024-08-01",author:"（担当者）",status:"ドラフト",ptype:"スマホアプリ 仕様書（マネーフォワード公式テンプレ・記入例）"},
+  custom:[
+    {title:"アプリ概要",type:"kv",rows:[["アプリ名","かんたん家計簿"],["バージョン","1.0.0"],["ターゲットユーザー","家計管理を始めたい20〜40代の個人"],["アプリ概要","日々の収支を記録し月次でグラフ可視化するスマホアプリ"],["目的","記帳の習慣化と支出の把握を支援する"]]},
+    {title:"機能要件",type:"table",cols:["機能名","説明","優先度"],rows:[["収支入力","金額・カテゴリ・日付を登録","高"],["月次レポート","月単位で収支をグラフ表示","中"],["データバックアップ","クラウドへ保存・復元","低"]]},
+    {title:"非機能要件",type:"kv",rows:[["パフォーマンス目標","主要画面はp95 1秒以内"],["セキュリティ要件","通信はTLS、端末内データは暗号化"],["互換性要件","iOS16+/Android10+"],["保守性・拡張性","機能をモジュール分割し追加容易に"]]},
+    {title:"技術要件",type:"kv",rows:[["開発言語","Swift / Kotlin"],["フレームワーク","SwiftUI / Jetpack Compose"],["データベース","SQLite（端末）／ クラウドDB"],["API","REST（同期用）"]]},
+    {title:"スケジュール",type:"table",cols:["フェーズ","開始日","終了日","マイルストーン"],rows:[["設計","2024-08-01","2024-08-14","設計合意"],["実装","2024-08-15","2024-09-15","α版"],["テスト","2024-09-16","2024-09-30","リリース判定"]]},
+    {title:"トラブルシューティング",type:"table",cols:["トラブル内容","対処方法","対応者"],rows:[["同期に失敗する","通信状態を確認し再試行。継続時はログ送付","開発担当"],["起動が遅い","キャッシュ削除・再起動","サポート"]]},
+    {title:"バージョン管理",type:"table",cols:["バージョン番号","変更履歴"],rows:[["1.0.0","初版リリース"],["1.0.1","不具合修正"]]}
+  ],
+  refs:["マネーフォワード クラウド『スマホアプリ仕様書』テンプレート（公式・無料）","本書は公式テンプレの項目（アプリ概要／機能要件／非機能要件／技術要件／スケジュール／トラブルシューティング／バージョン管理）に沿った記入例（値は一例）"]
+};}
+
+var BUILTINS=[
+  {id:"webapi",label:"Web API（バックエンド）",group:"業種テンプレ"},
+  {id:"mobile",label:"モバイルアプリ（iOS/Android）",group:"業種テンプレ"},
+  {id:"cli",label:"CLIツール／バッチ",group:"業種テンプレ"},
+  {id:"etl",label:"データ基盤／ETLパイプライン",group:"業種テンプレ"},
+  {id:"internal",label:"社内業務システム（CRUD＋権限）",group:"業種テンプレ"},
+  {id:"empty",label:"空（カスタム）",group:"業種テンプレ"},
+  {id:"blank_webapi",label:"Web API【白紙ひな形】記載は自分で",group:"業種テンプレ（白紙・記載は自分で）"},
+  {id:"blank_mobile",label:"モバイルアプリ【白紙ひな形】記載は自分で",group:"業種テンプレ（白紙・記載は自分で）"},
+  {id:"blank_cli",label:"CLI／バッチ【白紙ひな形】記載は自分で",group:"業種テンプレ（白紙・記載は自分で）"},
+  {id:"blank_etl",label:"データ基盤／ETL【白紙ひな形】記載は自分で",group:"業種テンプレ（白紙・記載は自分で）"},
+  {id:"blank_internal",label:"社内業務システム【白紙ひな形】記載は自分で",group:"業種テンプレ（白紙・記載は自分で）"},
+  {id:"artifact",label:"① PRO 基本設計書 兼 実装仕様書（新人・中堅／AI再現）",group:"うさうさ研修サンプル（5パターン）"},
+  {id:"suite_new_a",label:"② 新人向け 前半（基本設計＋詳細設計①）",group:"うさうさ研修サンプル（5パターン）"},
+  {id:"suite_new_b",label:"③ 新人向け 後半（詳細設計②＋仕様設計）",group:"うさうさ研修サンプル（5パターン）"},
+  {id:"suite_mid_a",label:"④ 中堅向け 前半（目的・基本設計＋詳細設計①）",group:"うさうさ研修サンプル（5パターン）"},
+  {id:"suite_mid_b",label:"⑤ 中堅向け 後半（詳細設計②＋仕様設計＋テスト戦略＋制約）",group:"うさうさ研修サンプル（5パターン）"},
+  {id:"blank_pro",label:"① PRO【白紙ひな形】記載は自分で",group:"うさうさ研修ひな形（白紙・5パターン）"},
+  {id:"blank_new_a",label:"② 新人 前半【白紙ひな形】記載は自分で",group:"うさうさ研修ひな形（白紙・5パターン）"},
+  {id:"blank_new_b",label:"③ 新人 後半【白紙ひな形】記載は自分で",group:"うさうさ研修ひな形（白紙・5パターン）"},
+  {id:"blank_mid_a",label:"④ 中堅 前半【白紙ひな形】記載は自分で",group:"うさうさ研修ひな形（白紙・5パターン）"},
+  {id:"blank_mid_b",label:"⑤ 中堅 後半【白紙ひな形】記載は自分で",group:"うさうさ研修ひな形（白紙・5パターン）"},
+  {id:"mf",label:"Design Doc サンプル（マネーフォワード流・記入済み）",group:"マネーフォワード流 Design Doc（公式参考）"},
+  {id:"blank_mf",label:"Design Doc 白紙ひな形（マネーフォワード流・記載は自分で）",group:"マネーフォワード流 Design Doc（公式参考）"},
+  {id:"mf_proposal",label:"アプリ開発 企画書（公式テンプレ・項目そのまま）",group:"マネーフォワード公式テンプレ（そのまま）"},
+  {id:"blank_mf_proposal",label:"アプリ開発 企画書【白紙】",group:"マネーフォワード公式テンプレ（そのまま）"},
+  {id:"mf_webscreen",label:"web 画面仕様書（公式テンプレ・項目そのまま）",group:"マネーフォワード公式テンプレ（そのまま）"},
+  {id:"blank_mf_webscreen",label:"web 画面仕様書【白紙】",group:"マネーフォワード公式テンプレ（そのまま）"},
+  {id:"mf_appspec",label:"スマホアプリ 仕様書（公式テンプレ・項目そのまま）",group:"マネーフォワード公式テンプレ（そのまま）"},
+  {id:"blank_mf_appspec",label:"スマホアプリ 仕様書【白紙】",group:"マネーフォワード公式テンプレ（そのまま）"}
+];
+/* ---------- 5 うさうさ research-spec patterns (derived from the まるごとスイート sample) ---------- */
+function suiteV(ov){return Object.assign({},preset("artifact"),ov);}
+/* blank skeleton: keep section structure + IDs (FR-/NFR-/ADR-/UC-/TBD-/DEC-/ISS-) and FR priority, clear the rest for the user to fill in */
+function blankModel(src){
+  if(src.custom){
+    var mc=JSON.parse(JSON.stringify(src));
+    mc.meta={title:"",version:"",date:"",author:"",status:"",ptype:""};
+    mc.custom=mc.custom.map(function(s){
+      if(s.type==="prose")return {title:s.title,type:"prose",ph:s.ph||s.title,text:""};
+      if(s.type==="kv")return {title:s.title,type:"kv",rows:s.rows.map(function(r){return [r[0],""];})};
+      return {title:s.title,type:"table",cols:s.cols,rows:s.rows.map(function(r){return s.cols.map(function(){return "";});})};
+    });
+    return mc;
+  }
+  var m=JSON.parse(JSON.stringify(src));
+  m.meta={title:"",version:"",date:"",author:"",status:"",ptype:""};
+  m.bg="";m.archNote="";m.diagram="";m.sequence="";m.repro="";
+  function keepId(c){return typeof c==="string"&&/^(FR-|NFR-|ADR-|UC-|TBD-|DEC-|ISS-)/.test(c);}
+  function isPri(c){return typeof c==="string"&&/^(Must|Should|Could|Won)/.test(c);}
+  function blankRows(rows,keepFirstId,keepPriIdx){
+    return rows.map(function(r){
+      if(typeof r==="string")return "";
+      return r.map(function(c,i){
+        if(i===0&&keepFirstId&&keepId(c))return c;
+        if(keepPriIdx!=null&&i===keepPriIdx&&isPri(c))return c;
+        return "";
+      });
+    });
+  }
+  m.stakeholders=blankRows(m.stakeholders);
+  m.scopeIn=m.scopeIn.map(function(){return "";});
+  m.scopeOut=m.scopeOut.map(function(){return "";});
+  m.terms=blankRows(m.terms);
+  m.fr=blankRows(m.fr,true,2);
+  m.nfr=blankRows(m.nfr,true);
+  m.constraints=blankRows(m.constraints);
+  m.assumptions=m.assumptions.map(function(){return "";});
+  m.risks=blankRows(m.risks);
+  m.components=blankRows(m.components);
+  m.dataflow=blankRows(m.dataflow);
+  m.extIf=blankRows(m.extIf);
+  m.adr=blankRows(m.adr,true);
+  m.modules=blankRows(m.modules);
+  m.data=blankRows(m.data);
+  m.api=blankRows(m.api);
+  m.errors=blankRows(m.errors);
+  m.security=m.security.map(function(){return "";});
+  m.logging=m.logging.map(function(){return "";});
+  m.env=blankRows(m.env);
+  m.tests=blankRows(m.tests);
+  m.tbd=blankRows(m.tbd,true);
+  m.rev=blankRows(m.rev);
+  m.refs=m.refs.map(function(){return "";});
+  return m;
+}
+/* commercial-grade example used as faint placeholders for the 空（カスタム）preset */
+function cHints(){return JSON.parse(JSON.stringify(preset("artifact")));}
+function sNewA(){return suiteV({
+  meta:{title:"うさうさ海辺の学校 まるごとスイート｜新人向け（前半）",version:VERSION,date:STAMP,author:"サブ講師",status:"研修配布",ptype:"単体HTMLアーティファクト（新人向け・基本設計＋詳細設計①）"},
+  bg:"新卒・未経験エンジニア研修の道具（学習・図解・論文・PoC・報連相）を1つのHTMLにまとめる。配るのが1ファイルで済み、ネットが不安定でも開けるよう外部依存ゼロ・オフラインを出発点にする。※たとえ：1つのラーメン店に5つの専門カウンターがある、と想像してください（厨房=1ファイル、調味料=APIキー、出前が止まってもテイクアウト窓口=保存パネルが手渡し）。※不正確なたとえ。",
+  terms:[["アーティファクト","配布する1枚のHTMLファイル"],["HTML","ブラウザで開く画面の素材"],["base64","ファイルを文字列に変換して中に入れておく方式"],["document.write","いまの画面を別の中身にまるごと書き換える命令"],["API/APIキー","AIに頼む窓口と、自分用の合言葉"],["OOXML","Word/Excel/PowerPointの本物のファイル形式"]],
+  scopeIn:["1ファイルで配布（5教室）","オフライン動作","カードで教室を開く","保存パネルでの保存"],scopeOut:["自前サーバ","認証基盤","永続DB（クライアント記憶域のみ）"],
+  fr:[["FR-01","ホームのカードで教室を開ける","Must","Given ホーム, When カード押下, Then 該当教室がdocument.writeで開く"],["FR-02","MECEの3段導線（まなぶ→つたえる→すすめる）","Must","Given ホーム, Then 3群に分類表示"],["FR-03","メニューで教室/ホームを行き来できる","Must","Given 任意の教室, When メニュー, Then hash遷移で目的UIへ"],["FR-05","保存パネルの⬇で保存できる","Must","Given 保存操作, When ⬇押下, Then ファイルが保存される"]],
+  nfr:[["NFR-01","可搬性","単体HTML・インストール不要","1ファイルで配布・起動"],["NFR-02","オフライン","主要機能が動作","外部依存ゼロ"],["NFR-03","やさしさ","文系・未経験でも使える","たとえ話・🟢中心"]],
+  archNote:"1ファイルの中に『海辺の学校』があり、5つの教室（まなびの島/ずかいのアトリエ/ろんぶんの灯台/けんしょうの港/なみうちぎわ教室）が入っています。ホームはMECEの3段。",
+  modules:[["教室を開く（カード）","カード押下","教室画面に置換","-","いまの画面がその教室の中身に書き換わる（中身は最初から1ファイル内）"],["ホームに戻る（メニュー）","メニュー操作","ホーム表示","-","左下メニューの🏖️ホーム"],["保存する","保存ボタン","保存パネル","-","パネルの⬇で保存。うまくいかなければ長押し→リンク先を保存"]],
+  errors:[["エラー時のみ🐞表示","window error 等","ログを開いてコピー（後半で詳説）"]],
+  security:["APIキーは端末内のみ・共有PCで使用後クリア","本物のWord/Excel/PPTを出す（見た目だけのHTML差し替えはしない）","事実と所感を分ける／固有名なし／ウソなく"],
+  logging:["エラー時だけ🐞ログ表示（後半で詳説）"],
+  env:[["VERSION/STAMP","v1.8.1 / 2026-06-12","版数5箇所統一"]],
+  tests:[["ゼロバグ確認","配る前に自動テストで問題ゼロを確認","FR-01,02,03,05"],["切り分け","『道具のバグ』か『テストの書き方の誤り』を分けて直す","-"]],
+  rev:[["v1.8.1 PRO","2026-06-12","166項目ゼロバグ・刻印"]],
+  refs:["新人向け（前半）アーティファクト仕様書","本成果物：まるごとスイート PRO v1.8.1"],
+  repro:"本書（前半）だけで、ハブ＋5教室の全体像・MECEホーム・教室の開きかた・保存パネルが再構築できることを意図する。"});}
+function sNewB(){return suiteV({
+  meta:{title:"うさうさ海辺の学校 まるごとスイート｜新人向け（後半）",version:VERSION,date:STAMP,author:"サブ講師",status:"研修配布",ptype:"単体HTMLアーティファクト（新人向け・詳細設計②＋仕様設計）"},
+  bg:"後半では、APIキー・エラーログ・遊び心と、保存できる形式・バージョンの付け方・守るルール・テストの考え方をやさしく説明する。",
+  terms:[["APIキー","AIに頼むときの自分用の合言葉（端末内のみ保存）"],["エラーログ","エラー発生時だけ出る🐞の記録"],["OOXML","Word/Excel/PowerPointの本物のファイル形式"]],
+  scopeIn:["Excel(.xlsx)＝PoC評価・報連相ログ","Word(.docx)＝PoC計画書","PDF＝印刷→PDFで保存","CSV/Markdown＝一覧・素材","PPT/PNG＝図解・スライド"],
+  fr:[["FR-04","API設定で自分のキーを保存→接続確認できる","Should","Given キー入力, When 接続確認, Then 200で接続OK／401でキー無効"],["FR-05","本物のWord/Excel/PDF等で保存できる","Must","Given 保存操作, Then OOXML/印刷PDFで保存"],["FR-06","エラー時のみ🐞ログを表示・コピーできる","Should","Given エラー発生, Then 一覧/コピー/クリア"]],
+  nfr:[["NFR-01","セキュリティ","キーは端末内のみ・送信先はAnthropic APIだけ","共有PCで使用後クリア"],["NFR-02","保守性","ゼロバグで版上げ","自動テスト全区分通過"]],
+  archNote:"APIキー（任意）・エラーログ・遊び心と、保存形式・版・守るルール・テストの考え方。",
+  components:[["共通機能","API設定/保存/ログ/遊び心","後半で扱う共通の足回り"]],
+  modules:[["APIキー設定","キー入力","端末内保存・全教室共有","共有PCはクリア","Claude.ai内はキー不要／ローカルは⚙️設定→接続確認"],["エラーログ","-","🐞ボタン（エラー時のみ）","-","いつ・どんなエラーかを一覧・コピー・クリア"],["遊び心","-","うさぎ／季節デコ","prefers-reduced-motionで停止","タップで応援、波打ちぎわに蟹/カモメ/貝、季節でヒトデ色"]],
+  errors:[["エラー発生","window error 等","🐞ログに記録（一覧・コピー・クリア）"]],
+  security:["APIキーは端末内のみ・共有PCでは使用後にクリア","AIが作ったURL/文章は必ず人がレビュー","法務・契約は社内の正式ルートで確認","シングルHTML・外部依存ゼロ・オフライン","本物のWord/Excel/PPTを出す（見た目だけのHTML差し替えはしない）","事実と所感を分ける／固有名なし／ウソなく"],
+  logging:["エラー時だけ🐞ログ","時刻・種別・内容を一覧","コピー・クリア可"],
+  env:[["APIキー","(未設定)","localStorage usausa_api_key（不可時メモリ）"],["VERSION/STAMP","v1.8.1 / 2026-06-12","版数5箇所＝先頭/タイトル/バッジ/フッター/内部"]],
+  tests:[["ゼロバグ確認","配る前に自動テスト","FR-04,05,06"],["切り分け","『道具のバグ』か『テストの書き方の誤り』を分けて直す","-"]],
+  rev:[["v1.8.1 PRO","2026-06-12","166項目ゼロバグ・刻印"]],
+  refs:["新人向け（後半）アーティファクト仕様書"],
+  repro:"本書（後半）だけで、APIキー運用・エラーログ・保存形式・版数ルール・テストの考え方が再構築できることを意図する。"});}
+function sMidA(){return suiteV({
+  meta:{title:"うさうさ海辺の学校 まるごとスイート｜中堅向け（前半）",version:VERSION,date:STAMP,author:"サブ講師",status:"保守・拡張",ptype:"単体HTMLアーティファクト（中堅向け・基本設計＋詳細設計①共通基盤）"},
+  bg:"研修5機能を単体HTMLに集約し、配布・オフライン運用・引き継ぎのコストを下げる。保守・拡張担当向けに、基本設計と詳細設計①（共通基盤）を収録する。",
+  nfr:[["NFR-01","配布","単体HTML・インストール不要","1ファイル"],["NFR-02","依存","外部依存ゼロ","フォント/生成libはオンライン時のみ取得"],["NFR-03","実行環境","サンドボックス内でも主要機能が動作","document.write/保存パネル"],["NFR-04","保存","自動DL制限下でもユーザー操作で保存可","保存パネル"],["NFR-05","保守","ゼロバグ確認後に版を上げる","ビルド再生成＋自動テスト"]],
+  fr:[["FR-01","カード/ハッシュで教室を開ける","Must","Given ホーム, When カード押下, Then document.writeで開く"],["FR-02","MECEの3段導線","Must","Given ホーム, Then 3群に分類表示"],["FR-03","全教室/ホームへ回遊できる","Must","Given 任意の教室, When USMENU, Then hash遷移"],["FR-05","ユーザー操作で保存できる","Must","Given <a download>クリック, Then 保存パネル経由で保存"]],
+  archNote:"ハブ＋内包教室：ホーム（ハブ）が5教室の本体をbase64文字列 TOOLS{harness,zukai,ronbun,poc,hou} として内包。教室を開くときハブが共通の足回り（ログ／APIブートストラップ／海辺メニュー／うさぎ）を教室HTMLへ注入する。",
+  dataflow:[["APIキー","localStorage usausa_api_key（不可時メモリ）→fetchパッチがapi.anthropic.com宛に付与"],["ログ","sessionStorage usausa_errlog＋window.__USLOGMEM__に集約（document.write跨ぎ共有）"],["保存","<a download>クリック→保存パネル（Blob URLはrevoke遅延で延命）"]],
+  modules:[["decodeTool(key)","base64","UTF-8文字列","失敗はログ","atob→Uint8Array.from(charCodeAt)→TextDecoder('utf-8').decode"],["openTool(key)","key","document.write置換","try/catchでログ・splash解除","splash→buildToolDoc→setTimeout(60ms)→document.open/write/close"],["buildToolDoc(html)","教室HTML","注入済みHTML","-","head:logScript→apiBootstrap ／ body前:USMENU→bunScript。'<scr'+'ipt>'連結で<\/script>早期終了回避"],["apiBootstrap()","-","fetchラップ","二重適用防止","url に api.anthropic.com を含みキーがある時のみ x-api-key/anthropic-version:2023-06-01/anthropic-dangerous-direct-browser-access を付与。apiTestは claude-sonnet-4-20250514 に max_tokens:8 でping"],["DLモジュール","<a download>クリック","保存パネル表示","自前アンカーは__usausa=1で無限ループ回避","HTMLAnchorElement.prototype.clickをラップ。revokeを約120秒遅延でBlob URL延命"]],
+  adr:[["ADR-01","教室の開き方","document.write置換（base64内包）","サンドボックスで blob:/iframe がブロックされやすい。代替:iframe→不採用。失われる共通体験は注入と状態共有で補完"],["ADR-02","注入順","head:log→api ／ body:menu→bun","本文実行前にログ/APIを有効化"],["ADR-03","スクリプト注入","'<scr'+'ipt>'連結・JSON文字列化","<\/script>早期終了とインジェクションを回避"]],
+  sequence:"ユーザ → ハブ: card/#tool=KEY\nハブ → 共通基盤: openTool(key)\n  → decodeTool: base64→UTF-8\n  → buildToolDoc: 注入(head:log→api / body:menu→bun)\n  → document.write: ページ置換",
+  errors:[["（後半で詳説）","エラーログ堅牢化は後半","-"]],
+  tests:[["ホワイトボックス","全<script>静的構文","-"],["単体","base64往復一致（decodeTool）","FR-01"],["ブラックボックス","ホームDOM契約（カード5枚・MECE）","FR-02"],["結合/システム","クリック→書換→正しい教室","FR-01,03"],["機能","保存パネル","FR-05"]],
+  rev:[["v1.8.1 PRO","2026-06-12","166項目ゼロバグ・刻印"]],
+  refs:["中堅向け（前半）アーティファクト仕様書"],
+  repro:"本書（前半）だけで、ハブの内包/注入/置換・共通基盤（decodeTool/buildToolDoc/openTool/apiBootstrap/DLモジュール）が再構築できることを意図する。"});}
+function sMidB(){return suiteV({
+  meta:{title:"うさうさ海辺の学校 まるごとスイート｜中堅向け（後半）",version:VERSION,date:STAMP,author:"サブ講師",status:"保守・拡張",ptype:"単体HTMLアーティファクト（中堅向け・詳細設計②＋仕様設計＋テスト戦略＋制約）"},
+  bg:"詳細設計②（エラーログ／ハッシュ遷移／季節・うさぎ）・仕様設計（ランタイムAPI／キー保存／版数命名／ファイル形式）・テスト戦略・制約を収録する。本リリース v1.8.1 PRO は166項目すべて通過（ゼロバグ）。",
+  fr:[["FR-04","APIキー設定と接続確認","Should","Given キー入力, When 接続確認, Then 200で接続OK／401でキー無効"],["FR-05","本物のWord/Excel/PPT/PDF等で保存できる","Must","Given 保存, Then OOXML/印刷PDFで保存"],["FR-06","エラー時のみ🐞ログを表示・コピーできる","Should","Given エラー, Then 一覧/コピー/クリア"]],
+  nfr:[["NFR-01","可観測性","エラーを握り潰さない","error/promise/console捕捉・🐞"],["NFR-02","保守性","ゼロバグで版上げ","jsdom 166項目全区分"]],
+  archNote:"詳細設計②と仕様設計。ランタイムAPI window.__USAUSA_SUITE__ を公開。版数は5箇所統一・PRO刻印（build:2026-06-12）。",
+  components:[["共通基盤（前半参照）","decodeTool/buildToolDoc/openTool 等","前半に詳細"]],
+  modules:[["エラーログ load()","-","ログ表示","-","sessionStorageとメモリの件数が多い方を採用（非永続環境でも消えない）。件数>0で🐞表示、早期エラーでもadd()内でUI生成（DOMContentLoaded前でも出る）"],["ハッシュ遷移","location.hash","openTool/home","-","/tool=([a-z]+)/で解析、TOOLSに存在すればopenTool。USMENUはhash設定＋reloadのみ（教室を肥大化させない）"],["季節・うさぎ・応援","new Date().getMonth()","季節デコ/cameo","prefers-reduced-motionで停止","春3-5/夏6-8/秋9-11/冬12-2にヒトデ色＋🌸🌺🍁❄️。タップで約1.8秒の応援ふきだし"]],
+  data:[["window.__USAUSA_SUITE__","JS(window)","object","実行時","{version,edition:'PRO',build,tools,openTool,decodeTool,buildToolDoc,apiTest,kGet,kSet,apiBootstrap,logAdd}"],["usausa_api_key","localStorage(不可時メモリ__MEMKEY__)","string","端末永続/クリア可","送信先はapi.anthropic.comのみ。ハブ＋全教室で共有"],["usausa_errlog","sessionStorage＋__USLOGMEM__","JSON配列","セッション","document.write跨ぎで共有"]],
+  api:[["POST","https://api.anthropic.com/v1/messages","apiTest: {model:claude-sonnet-4-20250514, max_tokens:8}","{id,content[],usage}","200/401/(例外)CORS"]],
+  sequence:"USMENU → location.hash='tool=KEY' → reload\nハブ → /tool=([a-z]+)/ 解析 → TOOLSに存在 → openTool\n無ければ home",
+  errors:[["load()がメモリログを無視","sessionStorage空時","件数の多い方を採用に修正（堅牢化）"],["DOMContentLoaded前のエラーでUI未生成","早期エラー","add()実行時にUI生成へ修正（堅牢化）"],["方針","-","『ツールのバグ』か『テストコードの誤り』かを切り分けて記録・修正"]],
+  env:[["xlsx","SheetJS（writeFile）","→保存パネル"],["docx","docx（Packer.toBlob）","→保存パネル"],["pptx","PptxGenJS（write）","→保存パネル"],["csv/md/svg","Blob＋<a download>","→保存パネル"],["pdf","window.print","#usPrintArea＋print CSS"],["VERSION/STAMP","v1.8.1 / 2026-06-12","版数5箇所統一・ファイル名はASCII＋日付"]],
+  tests:[["基盤","jsdomによる商用グレード自動テスト","-"],["API連携","ヘッダー付与・接続確認(200/401/例外)","FR-04"],["保存/PDF/キー継続","本物の出力","FR-05"],["監視","error/promise/console捕捉・🐞表示条件","FR-06"],["モンキー","乱打・異常系で例外なし","-"]],
+  constraints:[["技術","教室本体はES5寄り構文（オプショナルチェーン等回避）。innerHTMLはエスケープ必須"],["出力","PPT(LibreOffice経由)は絵文字不可→図形＋テキスト代替。PDFは印刷ベース"],["保存","自動DL制限環境では保存はユーザー操作の保存パネルで担保"]],
+  tbd:[["TBD-1","本物の.pdfバイナリ（日本語フォント埋込）","現状は印刷PDF。要望時に別途対応"],["TBD-2","恒久監査（Webhook送信）","logAddフックで拡張可"]],
+  rev:[["v1.5.0","","エラーログ"],["v1.7.0","","遊び心"],["v1.8.0","","うさぎ各教室・季節デコ・タップ応援"],["v1.8.1 PRO","2026-06-12","商用テスト166項目ゼロバグ・刻印"]],
+  refs:["中堅向け（後半）アーティファクト仕様書","本成果物：まるごとスイート PRO v1.8.1（単体HTML）"],
+  repro:"本書（後半）だけで、エラーログ堅牢化・ハッシュ遷移・季節演出・ランタイムAPI・キー保存仕様・ファイル生成経路・テスト戦略が再構築できることを意図する。"});}
+
+
+/* ---------- optional commercial-grade sections (default OFF) ---------- */
+var OPTSECS=[
+ {key:"approvals",title:"文書管理・承認（サインオフ）",sheet:"承認",cols:["役割","担当(役職名)","状態","日付"],add:["","","承認待ち",""],
+   def:[["承認者","プロジェクト責任者","承認待ち",""],["レビュア","設計担当","レビュー中",""],["作成者","サブ講師","起票",""]]},
+ {key:"abbrev",title:"略語・用語（英日対訳）",sheet:"略語",cols:["略語","正式名称","説明"],add:["","",""],
+   def:[["SLA","Service Level Agreement","サービス品質の合意"],["RTO","Recovery Time Objective","目標復旧時間"],["RPO","Recovery Point Objective","目標復旧時点"]]},
+ {key:"business",title:"ビジネス要件・成功指標（KPI）",sheet:"ビジネスKPI",note:"ビジネス目標（WHYの上位）",cols:["指標(KPI)","目標値","測定方法"],add:["","",""],
+   def:[["作業時間の削減","30%減","導入前後の比較"],["手戻り率","5%以下","レビュー記録"]]},
+ {key:"usecases",title:"ユースケース",sheet:"ユースケース",cols:["ID","アクター","主フロー","例外フロー"],add:["UC-","","",""],
+   def:[["UC-01","利用者","目的を選び操作→結果を得る","入力不備→再入力を促す"]]},
+ {key:"raci",title:"責任分担（RACI）",sheet:"RACI",cols:["タスク","R 実行","A 説明責任","C 相談","I 報告"],add:["","","","",""],
+   def:[["要件確定","設計担当","プロジェクト責任者","有識者","運用担当"],["設計","設計担当","プロジェクト責任者","有識者","運用担当"],["検収","運用担当","プロジェクト責任者","設計担当","利用者"]]},
+ {key:"privacy",title:"プライバシー・データ保護",sheet:"プライバシー",note:"個人情報・データ保護の方針",cols:["取扱データ","分類","保持期間","根拠/方針"],add:["","","",""],
+   def:[["個人情報","機微","最小限","暗号化・最小化・端末内保持"],["操作ログ","内部","規定期間","アクセス制限"]]},
+ {key:"compliance",title:"コンプライアンス・準拠標準",sheet:"コンプライアンス",cols:["規格/法令","要求事項","対応"],add:["","",""],
+   def:[["OWASP ASVS","入力検証・認可","設計に反映"],["個人情報保護法","目的明示・最小化","プライバシー章参照"]]},
+ {key:"reliability",title:"可用性・SLA/SLO・DR（RTO/RPO）",sheet:"可用性SLO",note:"冗長化・バックアップ/リストア・DRの方針",cols:["指標","目標","備考"],add:["","",""],
+   def:[["稼働率(SLO)","99.9%/月",""],["RTO","4時間","DR手順あり"],["RPO","1時間","定期バックアップ"]]},
+ {key:"capacity",title:"性能・容量計画（キャパシティ）",sheet:"容量計画",note:"想定負荷・前提",cols:["項目","想定/目標","スケーリング方針"],add:["","",""],
+   def:[["ピーク負荷","100 rps","水平スケール"],["データ量","年間1TB増","アーカイブ/分割"]]},
+ {key:"deploy",title:"デプロイ・リリース設計",sheet:"デプロイ",note:"リリース戦略",cols:["環境/手順","内容","ロールバック"],add:["","",""],
+   def:[["環境","dev / stg / prod","—"],["CI/CD","自動テスト→段階デプロイ","直前バージョンへ"],["リリース","フィーチャーフラグで段階公開","フラグOFF"]]},
+ {key:"ops",title:"運用・監視設計（SLO/オンコール）",sheet:"運用監視",note:"オンコール・エスカレーション",cols:["監視/運用項目","しきい値/方針","通知/対応"],add:["","",""],
+   def:[["死活/エラー率","SLO逸脱","アラート→オンコール"],["メトリクス","レイテンシ/スループット","ダッシュボード"],["ランブック","主要障害の手順","運用Wiki"]]},
+ {key:"threat",title:"セキュリティ脅威モデル（STRIDE）",sheet:"脅威モデル",note:"信頼境界（データフロー上の境界）",cols:["脅威(STRIDE)","対象","対策"],add:["","",""],
+   def:[["Spoofing(なりすまし)","認証","強い認証・最小権限"],["Tampering(改ざん)","入力/保存","検証・署名・暗号化"],["Information Disclosure(漏洩)","秘密情報","暗号化・端末内保持"]]},
+ {key:"deps",title:"依存・サードパーティ／ライセンス",sheet:"依存ライセンス",cols:["名称","バージョン","ライセンス","用途"],add:["","","",""],
+   def:[["(生成ライブラリ)","固定","各OSS","オンライン時のみ取得"]]},
+ {key:"schedule",title:"スケジュール・マイルストーン",sheet:"スケジュール",cols:["マイルストーン","期日","成果物"],add:["","",""],
+   def:[["設計確定","","本書の承認"],["実装完了","","全FR実装"],["検収","","受入基準の充足"]]},
+ {key:"cost",title:"コスト・概算見積",sheet:"コスト",cols:["項目","概算","前提"],add:["","",""],
+   def:[["開発","","人日換算"],["運用","","月額"]]},
+ {key:"issues",title:"未解決課題・決定ログ",sheet:"課題決定",cols:["ID","種別","内容","状態","担当"],add:["ISS-","課題","","オープン",""],
+   def:[["ISS-01","課題","","オープン",""],["DEC-01","決定","","確定",""]]}
+];
+var OPTADD={};OPTSECS.forEach(function(s){OPTADD[s.key]=s.add;});
+function secByKey(k){for(var i=0;i<OPTSECS.length;i++)if(OPTSECS[i].key===k)return OPTSECS[i];return null;}
+function ensureOpt(m){
+  m.opt=m.opt||{};m.optData=m.optData||{};m.optNote=m.optNote||{};
+  OPTSECS.forEach(function(s){
+    if(m.opt[s.key]===undefined)m.opt[s.key]=false;
+    if(!m.optData[s.key])m.optData[s.key]=s.def.map(function(r){return r.slice();});
+    if(s.note&&m.optNote[s.key]===undefined)m.optNote[s.key]="";
+  });return m;
+}
+function optSectionHtml(s){
+  var h='<h2>'+esc(s.title)+'</h2>';
+  if(s.note&&(M.optNote[s.key]||"").trim())h+='<p>'+esc(M.optNote[s.key])+'</p>';
+  return h+tbl(s.cols,M.optData[s.key],s.cols[0]==="ID"?"ids":"");
+}
+
+var M = ensureOpt(preset("artifact"));
+var AIKEY_LS="usausa_devfloor_aikey";
+var AI_KEY="";
+
+/* ---------------- helpers ---------------- */
+function esc(s){return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+function $(id){return document.getElementById(id);}
+function toast(m){var t=$("toast");t.textContent=m;t.classList.add("on");setTimeout(function(){t.classList.remove("on");},1900);}
+/* ---------- 🐞 エラーログ（エラー時のみ表示・コピペ可・クリア可） ---------- */
+var ERRLOG_K="usausa_devfloor_errlog",__USLOGMEM__=[];
+function logRead(){var a=null;try{var s=sessionStorage.getItem(ERRLOG_K);a=s?JSON.parse(s):[];}catch(e){a=null;}if(!a||!a.length||a.length<__USLOGMEM__.length)a=__USLOGMEM__.slice();return a||[];}
+function logSave(a){__USLOGMEM__=a;try{sessionStorage.setItem(ERRLOG_K,JSON.stringify(a));}catch(e){}}
+function logAdd(type,msg,detail){try{var a=logRead();a.push({t:new Date().toISOString(),type:type,msg:String(msg==null?"":msg).slice(0,1000),detail:String(detail==null?"":detail).slice(0,4000)});if(a.length>200)a=a.slice(-200);logSave(a);updateErrBtn();}catch(_){}}
+function updateErrBtn(){var b=$("errBtn");if(!b)return;var n=logRead().length;if(n>0){b.style.display="block";b.textContent="🐞 ログ "+n;}else b.style.display="none";}
+function logText(){var a=logRead();if(!a.length)return "（ログはありません）";var head="うさうさ開発フロア v"+VERSION+" / "+navigator.userAgent+"\n--- error log ("+a.length+") ---\n";return head+a.map(function(e,i){return "#"+(i+1)+" ["+e.t+"] "+e.type+"\n"+e.msg+(e.detail?"\n"+e.detail:"");}).join("\n\n");}
+function openErrLog(){$("errArea").value=logText();$("errModal").classList.add("on");}
+window.addEventListener("error",function(e){logAdd("error",(e&&e.message)||"error",(e&&e.error&&e.error.stack)||(((e&&e.filename)||"")+(e&&e.lineno?(":"+e.lineno):"")));});
+window.addEventListener("unhandledrejection",function(e){var r=e&&e.reason;logAdd("promise",(r&&r.message)||String(r||"unhandledrejection"),(r&&r.stack)||"");});
+(function(){var oc=(window.console&&console.error)?console.error:null;if(oc)console.error=function(){try{logAdd("console",[].slice.call(arguments).map(function(x){return (x&&x.message)?x.message:String(x);}).join(" "),"");}catch(_){}return oc.apply(console,arguments);};})();
+function slug(s){var x=String(s||"spec").replace(/[^A-Za-z0-9]+/g,"-").replace(/^-+|-+$/g,"");return x||"spec";}
+function dl(name,text,mime){try{var b=new Blob([text],{type:mime||"text/plain;charset=utf-8"});var u=URL.createObjectURL(b);var a=document.createElement("a");a.href=u;a.download=name;document.body.appendChild(a);a.click();document.body.removeChild(a);setTimeout(function(){URL.revokeObjectURL(u);},120000);}catch(e){toast("保存に失敗:"+e.message);}}
+function fileBase(){return "usausa-reqdesign_"+slug(M.meta.title)+"_v"+M.meta.version+"_"+M.meta.date;}
+function dlBlob(name,blob){try{var u=URL.createObjectURL(blob);var a=document.createElement("a");a.href=u;a.download=name;document.body.appendChild(a);a.click();document.body.removeChild(a);setTimeout(function(){URL.revokeObjectURL(u);},120000);}catch(e){toast("保存に失敗:"+e.message);}}
+
+/* ---------- safe storage (localStorage, memory fallback) ---------- */
+var MEM={};
+function lsGet(k){try{return localStorage.getItem(k);}catch(e){return (k in MEM)?MEM[k]:null;}}
+function lsSet(k,v){try{localStorage.setItem(k,v);return true;}catch(e){MEM[k]=v;return false;}}
+function lsDel(k){try{localStorage.removeItem(k);}catch(e){delete MEM[k];}}
+function storageMode(){try{localStorage.setItem("__usttest","1");localStorage.removeItem("__usttest");return "local";}catch(e){return "memory";}}
+var AUTOSAVE="usausa_devfloor_autosave",TPLKEY="usausa_devfloor_templates",DRAFTKEY="usausa_devfloor_drafts",DRAFTMAX=10;
+
+/* ---------- 一時保存（スナップショット） ---------- */
+function getDrafts(){try{var a=JSON.parse(lsGet(DRAFTKEY)||"[]");return Array.isArray(a)?a:[];}catch(e){return [];}}
+function setDrafts(a){lsSet(DRAFTKEY,JSON.stringify(a));}
+function fmtTime(iso){try{var d=new Date(iso);function p(n){return ("0"+n).slice(-2);}return p(d.getMonth()+1)+"/"+p(d.getDate())+" "+p(d.getHours())+":"+p(d.getMinutes());}catch(e){return "";}}
+function saveDraft(){var a=getDrafts();a.unshift({ts:new Date().toISOString(),title:M.meta.title||"(無題)",model:M});if(a.length>DRAFTMAX)a=a.slice(0,DRAFTMAX);setDrafts(a);refreshDraftSel();var t=a[0];toast("🕒 一時保存しました（"+fmtTime(t.ts)+"）。最大"+DRAFTMAX+"件まで保持");}
+function restoreDraft(i){var a=getDrafts();if(a[i]&&loadModel(a[i].model))toast("↩ 一時保存（"+fmtTime(a[i].ts)+"）を復元しました");}
+function deleteDraft(i){var a=getDrafts();if(a[i]){var t=a[i];a.splice(i,1);setDrafts(a);refreshDraftSel();toast("🗑 一時保存（"+fmtTime(t.ts)+"）を削除");}}
+function refreshDraftSel(){var s=$("draftSel");if(!s)return;var a=getDrafts();s.innerHTML='<option value="">一時保存リスト…（'+a.length+'）</option>'+a.map(function(t,i){var title=(t.title||"(無題)");if(title.length>22)title=title.slice(0,22)+"…";return '<option value="'+i+'">'+esc(fmtTime(t.ts)+" · "+title)+'</option>';}).join("");}
+
+/* ---------- load a model object into M ---------- */
+function loadModel(obj){
+  if(!obj||typeof obj!=="object")return false;
+  var merged=Object.assign({},preset("empty"),obj);
+  if(!obj.blankHints)delete merged.blankHints;
+  M=ensureOpt(merged);
+  if(!M.meta)M.meta=preset("empty").meta;
+  renderForm();renderDoc();refreshStamp();updateStoreMode();return true;
+}
+
+/* ---------- edit-save (autosave + manual) ---------- */
+var _asT;
+function autosave(){try{lsSet(AUTOSAVE,JSON.stringify(M));}catch(e){}}
+function scheduleAutosave(){clearTimeout(_asT);_asT=setTimeout(autosave,700);}
+function saveEdits(){var ok=lsSet(AUTOSAVE,JSON.stringify(M));toast(ok?"💾 編集を保存しました（次回起動時に復元）":"💾 メモリに保存（この画面のみ）。ひな形DLで確実に保存できます");updateStoreMode();}
+function updateStoreMode(){var el=$("storeMode");if(!el)return;var m=storageMode();el.textContent=m==="local"?"💾 ローカル保存：有効":"💾 保存：メモリのみ（ひな形DL推奨）";el.className="bl "+(m==="local"?"ok":"warn");}
+
+/* ---------- templates (ひな形) ---------- */
+function getTemplates(){try{return JSON.parse(lsGet(TPLKEY)||"{}")||{};}catch(e){return {};}}
+function setTemplates(o){lsSet(TPLKEY,JSON.stringify(o));}
+function saveTemplateNamed(name){if(!name)return;var t=getTemplates();t[name]={savedAt:new Date().toISOString(),model:M};setTemplates(t);refreshTplSel(name);toast("＋ ひな形「"+name+"」を保存しました");}
+function loadTemplate(name){var t=getTemplates();if(t[name]&&loadModel(t[name].model))toast("読込：ひな形「"+name+"」");}
+function deleteTemplate(name){var t=getTemplates();if(t[name]){delete t[name];setTemplates(t);refreshTplSel();toast("🗑 ひな形「"+name+"」を削除");}}
+function refreshTplSel(sel){var s=$("tplSel");if(!s)return;var t=getTemplates(),names=Object.keys(t);
+  s.innerHTML='<option value="">保存済みひな形…（'+names.length+'）</option>'+names.map(function(n){return '<option value="'+esc(n)+'"'+(n===sel?" selected":"")+'>'+esc(n)+'</option>';}).join("");}
+
+/* ---------- template download / import (.json) ---------- */
+function downloadTemplate(){
+  var name=M.meta.title||"template";
+  var payload={schema:"usausa.reqdesign.template/v1",name:name,savedAt:new Date().toISOString(),version:VERSION,model:M};
+  dl("usausa-template_"+slug(name)+"_"+M.meta.date+".json",JSON.stringify(payload,null,2),"application/json;charset=utf-8");
+  toast("⬇ ひな形(.json)を保存しました");
+}
+function isReqExport(o){return !!(o&&(o.schema==="usausa.reqdesign/v1"||(o.requirements&&o.detailedDesign&&!o.fr&&!o.model)));}
+function importTemplateText(str){try{var o=JSON.parse(str);if(isReqExport(o)){toast("これは「{ }JSON（AI・機械可読の出力）」です。ひな形の保存/読込には「ひな形DL(.json)」をお使いください");return false;}var model=(o&&o.model)?o.model:o;if(loadModel(model)){toast("⬆ ひな形を読み込みました");return true;}toast("読込失敗：中身が空でした");return false;}catch(e){toast("読込失敗：JSONを確認してください（"+e.message+"）");return false;}}
+function onImportFile(e){var f=e.target.files&&e.target.files[0];if(!f)return;var r=new FileReader();r.onload=function(){importTemplateText(String(r.result));};r.readAsText(f);e.target.value="";}
+
+/* ---------- bundle export / import (all saved templates) ---------- */
+function exportAllTemplates(){
+  var t=getTemplates(),names=Object.keys(t);
+  if(!names.length){toast("保存済みひな形がありません（先に「名前を付けて保存」を）");return;}
+  var bundle={schema:"usausa.reqdesign.bundle/v1",exportedAt:new Date().toISOString(),version:VERSION,count:names.length,templates:t};
+  dl("usausa-templates-bundle_"+M.meta.date+".json",JSON.stringify(bundle,null,2),"application/json;charset=utf-8");
+  toast("⬇ ひな形 "+names.length+" 件を一括エクスポート");
+}
+function importBundleText(str){
+  try{
+    var o=JSON.parse(str),incoming={};
+    if(isReqExport(o)){toast("これは「{ }JSON（AI・機械可読の出力）」です。ひな形には「ひな形DL(.json)」/「全ひな形」をお使いください");return false;}
+    if(o&&o.templates&&typeof o.templates==="object")incoming=o.templates;
+    else if(o&&o.model)incoming[o.name||("取込"+Date.now())]={savedAt:new Date().toISOString(),model:o.model};
+    else if(o&&o.meta)incoming[(o.meta.title||("取込"+Date.now()))]={savedAt:new Date().toISOString(),model:o};
+    else{toast("形式を認識できませんでした（bundle/ひな形のJSON）");return false;}
+    var t=getTemplates(),n=0;
+    Object.keys(incoming).forEach(function(k){var key=k;if(t[key])key=k+" (取込)";t[key]=incoming[k];n++;});
+    setTemplates(t);refreshTplSel();toast("⬆ ひな形 "+n+" 件を取り込みました");return true;
+  }catch(e){toast("一括取込に失敗："+e.message);return false;}
+}
+function onBundleFile(e){var f=e.target.files&&e.target.files[0];if(!f)return;var r=new FileReader();r.onload=function(){importBundleText(String(r.result));};r.readAsText(f);e.target.value="";}
+
+/* ---------- traceability: FR <-> tests ---------- */
+function frNum(id){var m=String(id||"").match(/(\d+)/);return m?String(parseInt(m[1],10)):null;}
+function computeTrace(){
+  if(M.custom||!M.fr)return {coverage:[],uncovered:[],unknownRefs:[],orphanTests:[],total:0,covered:0};
+  var coverage=M.fr.filter(function(r){return (r[0]||"").trim();}).map(function(r){return {fr:(r[0]||"").trim(),req:r[1]||"",tests:[]};});
+  var idx={},num2id={};
+  coverage.forEach(function(c,i){idx[c.fr]=i;var n=frNum(c.fr);if(n)num2id[n]=c.fr;});
+  var unknownRefs=[],orphanTests=[];
+  M.tests.forEach(function(t,ti){
+    var cell=(t[2]||"").trim();
+    if(!cell||cell==="-"){orphanTests.push(ti);return;}
+    var nums=cell.match(/\d+/g)||[];
+    if(!nums.length){orphanTests.push(ti);return;}
+    var seen={},any=false;
+    nums.forEach(function(raw){
+      var n=String(parseInt(raw,10));if(seen[n])return;seen[n]=1;
+      if(num2id[n]){coverage[idx[num2id[n]]].tests.push(ti);any=true;}
+      else unknownRefs.push({testIdx:ti,ref:n,kind:M.tests[ti][0]||"テスト"});
+    });
+  });
+  var uncovered=coverage.filter(function(c){return c.tests.length===0;}).map(function(c){return c.fr;});
+  return {coverage:coverage,uncovered:uncovered,unknownRefs:unknownRefs,orphanTests:orphanTests,total:coverage.length,covered:coverage.length-uncovered.length};
+}
+function traceRows(tr){return tr.coverage.map(function(c){
+  var names=c.tests.map(function(ti){return M.tests[ti][0]||("行"+(ti+1));}).join("、")||"—";
+  return [c.fr,c.req,names,c.tests.length?"✅ カバー":"⚠️ 未紐付け"];});}
+function traceWarnLines(tr){
+  var w=[];
+  if(tr.uncovered.length)w.push("⚠️ テスト観点が未紐付けのFR："+tr.uncovered.join("、"));
+  if(tr.unknownRefs.length){var u=tr.unknownRefs.map(function(x){return x.kind+"→FR-?"+x.ref;});w.push("⚠️ 存在しないFRを参照しているテスト："+u.join("、"));}
+  if(tr.orphanTests.length)w.push("ℹ️ FR紐付けなしのテスト："+tr.orphanTests.map(function(i){return M.tests[i][0]||("行"+(i+1));}).join("、")+"（基盤テスト等なら可）");
+  return w;
+}
+
+/* ---------- on-demand library loader (online only) ---------- */
+function loadScript(urls){return new Promise(function(res,rej){
+  (function go(i){if(i>=urls.length){rej(new Error("取得失敗"));return;}
+    var s=document.createElement("script");s.src=urls[i];s.async=true;
+    s.onload=function(){res(urls[i]);};s.onerror=function(){if(s.parentNode)s.parentNode.removeChild(s);go(i+1);};
+    document.head.appendChild(s);})(0);});}
+function ensureLib(glob,urls){if(window[glob])return Promise.resolve();return loadScript(urls).then(function(){if(!window[glob])throw new Error("読込後も未定義");});}
+var DOCX_URLS=["https://unpkg.com/docx@9/build/index.umd.js","https://cdn.jsdelivr.net/npm/docx@9/build/index.umd.js"];
+var XLSX_URLS=["https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js","https://cdn.jsdelivr.net/npm/xlsx@0.20.3/dist/xlsx.full.min.js","https://unpkg.com/xlsx@0.20.3/dist/xlsx.full.min.js"];
+
+/* ---------- real .xlsx (SheetJS) ---------- */
+function genXlsx(btn){
+  var orig=btn?btn.textContent:"";if(btn)btn.textContent="📊…";toast("📊 Excelライブラリを取得中…（オンライン）");
+  return ensureLib("XLSX",XLSX_URLS).then(function(){
+    var X=window.XLSX,wb=X.utils.book_new();
+    function add(name,aoa){X.utils.book_append_sheet(wb,X.utils.aoa_to_sheet(aoa),name.slice(0,31));}
+    if(M.custom){
+      add("概要",[["項目","値"],["タイトル",M.meta.title],["版数",M.meta.version],["日付",M.meta.date],["著者",M.meta.author],["状態",M.meta.status],["種別",M.meta.ptype]]);
+      M.custom.forEach(function(cs,ci){var nm=(ci+1)+"_"+cs.title;
+        if(cs.type==="prose")add(nm,[[cs.title],[cs.text||""]]);
+        else if(cs.type==="kv")add(nm,[["項目","内容"]].concat(cs.rows));
+        else add(nm,[cs.cols].concat(cs.rows));});
+      var outC=X.write(wb,{type:"array",bookType:"xlsx"});
+      dlBlob(fileBase()+".xlsx",new Blob([outC],{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"}));
+      toast("⬇ Excel(.xlsx)を保存しました");return;
+    }
+    var bid=bhash(M.meta.title+"|"+M.meta.version+"|"+M.meta.date);
+    add("概要",[["項目","値"],["タイトル",M.meta.title],["版数",M.meta.version],["日付",M.meta.date],["著者",M.meta.author],["状態",M.meta.status],["種別",M.meta.ptype],["build",bid],["背景と目的",M.bg]]);
+    add("FR",[["ID","要件","優先度","受入基準(GWT)"]].concat(M.fr));
+    add("NFR",[["ID","カテゴリ","要件","指標/目標"]].concat(M.nfr));
+    add("用語",[["用語","定義"]].concat(M.terms));
+    add("ステークホルダー",[["役割","関心事"]].concat(M.stakeholders));
+    add("スコープ",[["区分","項目"]].concat(M.scopeIn.map(function(x){return ["やる",x];})).concat(M.scopeOut.map(function(x){return ["やらない",x];})));
+    add("制約前提",[["区分","内容"]].concat(M.constraints).concat(M.assumptions.map(function(a){return ["前提",a];})));
+    add("リスク",[["リスク","影響","対応"]].concat(M.risks));
+    add("コンポーネント",[["層","コンポーネント","責務"]].concat(M.components));
+    add("外部IF",[["名称","種別","概要"]].concat(M.extIf));
+    add("ADR",[["ID","論点","判断","理由/代替"]].concat(M.adr));
+    add("モジュール",[["名前","入力","出力","例外","概要/擬似コード"]].concat(M.modules));
+    add("データ設計",[["識別","記憶域/表","型","制約","説明"]].concat(M.data));
+    add("API",[["メソッド","パス","リクエスト","レスポンス","ステータス"]].concat(M.api));
+    add("例外設計",[["事象","捕捉","扱い"]].concat(M.errors));
+    add("環境変数",[["設定","既定/例","説明"]].concat(M.env));
+    add("テスト観点",[["区分","観点","対応FR"]].concat(M.tests));
+    var tr=computeTrace();
+    add("トレーサビリティ",[["FR","要件","対応テスト区分","状態"]].concat(traceRows(tr)).concat([[""]]).concat(traceWarnLines(tr).map(function(w){return [w];})));
+    add("TBD",[["ID","内容","暫定方針"]].concat(M.tbd));
+    add("改訂履歴",[["版","日付","内容"]].concat(M.rev));
+    OPTSECS.forEach(function(s){if(M.opt[s.key])add(s.sheet,(s.note&&(M.optNote[s.key]||"").trim()?[[s.note],[""]]:[]).concat([s.cols]).concat(M.optData[s.key]));});
+    var out=X.write(wb,{type:"array",bookType:"xlsx"});
+    dlBlob(fileBase()+".xlsx",new Blob([out],{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"}));
+    toast("⬇ Excel(.xlsx)を保存しました");
+  }).catch(function(e){toast("Excelライブラリを取得できませんでした（"+e.message+"）。オフラインかもしれません。Markdown/HTMLはオフラインで出せます。");})
+  .then(function(){if(btn)btn.textContent=orig;});
+}
+
+/* ---------- real .docx (docx UMD) ---------- */
+function genDocx(btn){
+  var orig=btn?btn.textContent:"";if(btn)btn.textContent="📄…";toast("📄 Wordライブラリを取得中…（オンライン）");
+  return ensureLib("docx",DOCX_URLS).then(function(){
+    var D=window.docx;
+    var Document=D.Document,Packer=D.Packer,Paragraph=D.Paragraph,TextRun=D.TextRun,Table=D.Table,TableRow=D.TableRow,TableCell=D.TableCell,
+        HeadingLevel=D.HeadingLevel,WidthType=D.WidthType,BorderStyle=D.BorderStyle,AlignmentType=D.AlignmentType,ShadingType=D.ShadingType,PageBreak=D.PageBreak;
+    var CW=9026,JP="Yu Gothic",MIN="Yu Mincho",MONO="MS Gothic",CY="2C7BE5",INK="1B2333";
+    var kids=[],bid=bhash(M.meta.title+"|"+M.meta.version+"|"+M.meta.date);
+    function run(t,o){o=o||{};return new TextRun({text:(t==null?"":String(t)),font:o.font||JP,size:o.size||20,bold:!!o.bold,color:o.color||INK,italics:!!o.it});}
+    function para(runs,o){o=o||{};return new Paragraph({children:Array.isArray(runs)?runs:[runs],spacing:o.spacing||{after:80,line:280},alignment:o.align,pageBreakBefore:!!o.pb});}
+    function h2(t){return new Paragraph({heading:HeadingLevel.HEADING_2,spacing:{before:200,after:90},children:[run(t,{size:26,bold:true,color:"10243F"})]});}
+    function partChip(t){return new Paragraph({spacing:{before:240,after:80},children:[run(t,{size:20,bold:true,color:"FFFFFF",font:MONO})],shading:{type:ShadingType.CLEAR,fill:CY}});}
+    function pre(text){return (String(text||"").split("\n")).map(function(ln){return new Paragraph({spacing:{after:0,line:240},shading:{type:ShadingType.CLEAR,fill:"0B1220"},children:[run(ln||" ",{font:MONO,size:16,color:"BFE0FF"})]});});}
+    function bullets(arr){return arr.map(function(x){return new Paragraph({spacing:{after:40},indent:{left:300},children:[run("・ "+(Array.isArray(x)?x.join("："):x))]});});}
+    var BORD={style:BorderStyle.SINGLE,size:1,color:"C9D4E4"};
+    function cell(text,w,head){return new TableCell({width:{size:w,type:WidthType.DXA},margins:{top:70,bottom:70,left:110,right:110},
+      shading:head?{type:ShadingType.CLEAR,fill:"10243F"}:undefined,
+      borders:{top:BORD,bottom:BORD,left:BORD,right:BORD},
+      children:[new Paragraph({spacing:{after:0,line:250},children:[run(text,{size:18,bold:!!head,color:head?"FFFFFF":INK})]})]});}
+    function table(headers,rows){
+      var n=headers.length,base=Math.floor(CW/n),ws=[];for(var i=0;i<n;i++)ws.push(i===n-1?CW-base*(n-1):base);
+      var trs=[new TableRow({tableHeader:true,children:headers.map(function(h,i){return cell(h,ws[i],true);})})];
+      rows.forEach(function(r){trs.push(new TableRow({children:headers.map(function(_,i){return cell(r[i]==null?"":r[i],ws[i]);})}));});
+      return new Table({width:{size:CW,type:WidthType.DXA},columnWidths:ws,rows:trs});
+    }
+    function noteBox(title,text,fill,bcolor){
+      return new Table({width:{size:CW,type:WidthType.DXA},columnWidths:[CW],rows:[new TableRow({children:[new TableCell({
+        width:{size:CW,type:WidthType.DXA},margins:{top:110,bottom:110,left:150,right:150},shading:{type:ShadingType.CLEAR,fill:fill},
+        borders:{top:{style:BorderStyle.SINGLE,size:3,color:bcolor},bottom:{style:BorderStyle.SINGLE,size:3,color:bcolor},left:{style:BorderStyle.SINGLE,size:16,color:bcolor},right:{style:BorderStyle.SINGLE,size:3,color:bcolor}},
+        children:[new Paragraph({spacing:{after:60},children:[run(title,{bold:true,color:bcolor})]})].concat((Array.isArray(text)?text:[text]).map(function(t){return new Paragraph({spacing:{after:30},children:[run(t)]});}))
+      })]})]});
+    }
+    var m=M.meta;
+    if(M.custom){
+      kids.push(new Paragraph({spacing:{after:30},children:[run("マネーフォワード公式テンプレ · 項目そのまま",{font:MONO,size:16,color:CY})]}));
+      kids.push(new Paragraph({spacing:{after:60},children:[run(m.title,{font:MIN,size:34,bold:true,color:"0F1B2E"})]}));
+      kids.push(para(run("v"+m.version+" / "+m.date+" / 著者："+m.author+" / 状態："+m.status,{font:MONO,size:18,color:"5B6577"})));
+      kids.push(para(run("成果物："+m.ptype,{font:MONO,size:18,color:"5B6577"})));
+      kids.push(para(run("BUILD "+m.version+" · "+m.date+" · #"+bid,{font:MONO,size:18,bold:true,color:CY})));
+      M.custom.forEach(function(cs,ci){kids.push(h2((ci+1)+". "+cs.title));
+        if(cs.type==="prose"){if(cs.text)kids.push.apply(kids,pre(cs.text));else kids.push(para(run("—")));}
+        else if(cs.type==="kv")kids.push(table(["項目","内容"],cs.rows));
+        else kids.push(table(cs.cols,cs.rows));});
+      if(M.refs&&M.refs.join("")){kids.push(h2("参考"));kids.push.apply(kids,bullets(M.refs));}
+      kids.push(new Paragraph({spacing:{before:200},alignment:AlignmentType.CENTER,children:[run("🐰🦺 うさうさ開発フロア · v"+m.version+" · #"+bid,{font:MONO,size:16,color:"5B6577"})]}));
+      var docC=new Document({styles:{default:{document:{run:{font:JP,size:20,color:INK}}}},sections:[{properties:{page:{size:{width:11906,height:16838},margin:{top:1440,right:1200,bottom:1440,left:1200}}},children:kids}]});
+      return Packer.toBlob(docC).then(function(blob){dlBlob(fileBase()+".docx",blob);toast("⬇ Word(.docx)を保存しました");});
+    }
+    kids.push(new Paragraph({spacing:{after:30},children:[run("REQUIREMENTS & DETAILED DESIGN · AI-REPRODUCIBLE",{font:MONO,size:16,color:CY})]}));
+    kids.push(new Paragraph({spacing:{after:60},children:[run(m.title,{font:MIN,size:34,bold:true,color:"0F1B2E"})]}));
+    kids.push(para(run("v"+m.version+" / "+m.date+" / 著者："+m.author+" / 状態："+m.status,{font:MONO,size:18,color:"5B6577"})));
+    kids.push(para(run("成果物："+m.ptype+" / 発行：うさうさ開発フロア",{font:MONO,size:18,color:"5B6577"})));
+    kids.push(para(run("BUILD "+m.version+" · "+m.date+" · #"+bid,{font:MONO,size:18,bold:true,color:CY})));
+    kids.push(noteBox("本書の読み方","事実（仕様）と所感（意見）を区別。たとえ話は※不正確と明示。固有名は出さず役職名で記述。捏造統計・架空引用はしない（ウソなく）。AIが読めば再現できる粒度を目標とする。","EEF6FF",CY));
+    if(M.opt.approvals){var apS=secByKey("approvals");kids.push(h2(apS.title));kids.push(table(apS.cols,M.optData[apS.key]));}
+    kids.push(partChip("PART I — 要件定義"));
+    kids.push(h2("1. 背景と目的"));kids.push(para(run(M.bg)));
+    kids.push(h2("2. ステークホルダー"));kids.push(table(["役割","関心事"],M.stakeholders));
+    kids.push(h2("3. スコープ"));kids.push(para(run("やる：",{bold:true})));kids.push.apply(kids,bullets(M.scopeIn));kids.push(para(run("やらない：",{bold:true})));kids.push.apply(kids,bullets(M.scopeOut));
+    kids.push(h2("4. 用語定義"));kids.push(table(["用語","定義"],M.terms));
+    kids.push(h2("5. 機能要件 FR"));kids.push(table(["ID","要件","優先度","受入基準(GWT)"],M.fr));
+    kids.push(h2("6. 非機能要件 NFR"));kids.push(table(["ID","カテゴリ","要件","指標/目標"],M.nfr));
+    kids.push(h2("7. 制約・前提"));kids.push(table(["区分","内容"],M.constraints));kids.push.apply(kids,bullets(M.assumptions));
+    kids.push(h2("8. リスクと対応"));kids.push(table(["リスク","影響","対応"],M.risks));
+    kids.push(partChip("PART II — 基本設計（マクロ）"));
+    kids.push(h2("9. 全体アーキテクチャ"));kids.push(para(run(M.archNote)));if(M.diagram)kids.push.apply(kids,pre(M.diagram));
+    kids.push(h2("10. コンポーネント構成"));kids.push(table(["層","コンポーネント","責務"],M.components));
+    kids.push(h2("11. データフロー"));kids.push(table(["名称","流れ"],M.dataflow));
+    kids.push(h2("12. 外部インターフェース"));kids.push(table(["名称","種別","概要"],M.extIf));
+    kids.push(h2("13. 設計判断 ADR"));kids.push(table(["ID","論点","判断","理由/代替"],M.adr));
+    kids.push(partChip("PART III — 詳細設計（ミクロ・AI再現粒度）"));
+    kids.push(h2("14. モジュール/関数詳細"));kids.push(table(["名前","入力","出力","例外","概要/擬似コード"],M.modules));
+    kids.push(h2("15. データ設計"));kids.push(table(["識別","記憶域/表","型","制約","説明"],M.data));
+    kids.push(h2("16. API詳細"));kids.push(table(["メソッド","パス","リクエスト","レスポンス","ステータス"],M.api));
+    kids.push(h2("17. シーケンス"));if(M.sequence)kids.push.apply(kids,pre(M.sequence));else kids.push(para(run("—")));
+    kids.push(h2("18. 例外・エラー設計"));kids.push(table(["事象","捕捉","扱い"],M.errors));
+    kids.push(h2("19. セキュリティ要件"));kids.push.apply(kids,bullets(M.security));
+    kids.push(h2("20. ログ・監査"));kids.push.apply(kids,bullets(M.logging));
+    kids.push(h2("21. 設定・環境変数"));kids.push(table(["設定","既定/例","説明"],M.env));
+    kids.push(h2("22. テスト戦略・観点"));kids.push(table(["区分","観点","対応FR"],M.tests));
+    var tr=computeTrace();
+    kids.push(h2("22.1 トレーサビリティ（FR↔テスト観点）"));kids.push(table(["FR","要件","対応テスト区分","状態"],traceRows(tr)));
+    var wl=traceWarnLines(tr);
+    kids.push(wl.length?noteBox("⚠️ トレーサビリティ警告",wl,"FDF0E6","B06D00"):noteBox("✅ トレーサビリティ","全FRにテスト観点が紐付いています。","EAFAF2","1C7A4D"));
+    kids.push(h2("23. 制約・未決事項 TBD"));kids.push(table(["ID","内容","暫定方針"],M.tbd));
+    kids.push(h2("24. 改訂履歴"));kids.push(table(["版","日付","内容"],M.rev));
+    kids.push(h2("25. 参考資料"));kids.push.apply(kids,bullets(M.refs));
+    var apx=OPTSECS.filter(function(s){return s.key!=="approvals"&&M.opt[s.key];});
+    if(apx.length){kids.push(partChip("PART IV — 商用補足（オプション）"));apx.forEach(function(s){kids.push(h2(s.title));if(s.note&&(M.optNote[s.key]||"").trim())kids.push(para(run(M.optNote[s.key])));kids.push(table(s.cols,M.optData[s.key]));});}
+    kids.push(noteBox("🔁 AI再現性チェック",M.repro||"本書だけで主要構成が再構築できることを意図する。","EAFAF2","1C7A4D"));
+    kids.push(new Paragraph({spacing:{before:200},alignment:AlignmentType.CENTER,children:[run("面白きこともなき世を面白く。 — 🐰🦺 うさうさ開発フロア · v"+m.version+" · #"+bid,{font:MONO,size:16,color:"5B6577"})]}));
+    var doc=new Document({styles:{default:{document:{run:{font:JP,size:20,color:INK}}}},
+      sections:[{properties:{page:{size:{width:11906,height:16838},margin:{top:1440,right:1200,bottom:1440,left:1200}}},children:kids}]});
+    return Packer.toBlob(doc).then(function(blob){dlBlob(fileBase()+".docx",blob);toast("⬇ Word(.docx)を保存しました");});
+  }).catch(function(e){toast("Wordライブラリを取得できませんでした（"+e.message+"）。オフラインかもしれません。Markdown/HTMLはオフラインで出せます。");})
+  .then(function(){if(btn)btn.textContent=orig;});
+}
+
+/* form builders */
+function hpPath(path){if(!M.blankHints)return "";var p=path.split("."),o=M.blankHints,i;for(i=0;i<p.length;i++){if(o==null)return "";o=o[p[i]];}return (typeof o==="string")?o:"";}
+function hpCell(store,key,i,c){if(store!=="M"||!M.blankHints)return "";var rows=M.blankHints[key];if(!rows||rows[i]==null)return "";var r=rows[i];return typeof r==="string"?(c===0?r:""):(r[c]||"");}
+function inp(label,path,ph,hint){var pl=(path.indexOf("meta.")===0)?(ph||""):(hpPath(path)||ph||"");return '<div class="field"><label>'+esc(label)+'</label><input data-p="'+path+'" value="'+esc(get(path))+'" placeholder="'+esc(pl)+'">'+(hint?'<p class="hint">'+esc(hint)+'</p>':'')+'</div>';}
+function area(label,path,ph,mono,ai){return '<div class="field"><label>'+esc(label)+(ai?' <button class="ai" data-ai="'+path+'">🤖 AI下書き</button>':'')+'</label><textarea class="'+(mono?'mono':'')+'" data-p="'+path+'" placeholder="'+esc(hpPath(path)||ph||"")+'">'+esc(get(path))+'</textarea></div>';}
+function get(path){var p=path.split("."),o=M;for(var i=0;i<p.length;i++)o=o[p[i]];return o;}
+function setP(path,v){var p=path.split("."),o=M;for(var i=0;i<p.length-1;i++)o=o[p[i]];o[p[p.length-1]]=v;}
+function listEd(key,cols,addLabel,store){
+  store=store||"M";var rows=(store==="opt"?M.optData:M)[key],h='<div class="rep" data-list="'+key+'" data-store="'+store+'">';
+  for(var i=0;i<rows.length;i++){
+    var isStr=typeof rows[i]==="string";
+    h+='<div class="reprow cols">';
+    for(var c=0;c<cols.length;c++){var val=isStr?(c===0?rows[i]:""):(rows[i][c]||"");var ph=hpCell(store,key,i,c)||cols[c];
+      var _ro="";
+      h+='<input'+_ro+' data-store="'+store+'" data-list="'+key+'" data-i="'+i+'" data-c="'+c+'" placeholder="'+esc(ph)+'" value="'+esc(val)+'">';}
+    h+='<button class="del" data-store="'+store+'" data-del="'+key+'" data-i="'+i+'">削除</button></div>';
+  }
+  return h+'<button class="miniadd" data-store="'+store+'" data-add="'+key+'">＋ '+esc(addLabel)+'</button></div>';
+}
+function area2(label,key){return '<div class="field"><label>'+esc(label)+'</label><textarea data-note="'+key+'" placeholder="'+esc(label)+'">'+esc(M.optNote[key]||"")+'</textarea></div>';}
+function optFormHtml(){
+  var g='<p class="hint" style="margin-bottom:6px">必要な章だけONにすると、プレビュー・各書き出しに追加されます（既定はOFF）。</p><div class="optgrid">';
+  OPTSECS.forEach(function(s){g+='<label class="optchk"><input type="checkbox" data-opt="'+s.key+'"'+(M.opt[s.key]?' checked':'')+'> '+esc(s.title)+'</label>';});
+  g+='</div>';
+  var ed="";
+  OPTSECS.forEach(function(s){if(!M.opt[s.key])return;
+    ed+='<div class="opted"><div class="opted-h">'+esc(s.title)+'</div>'+(s.note?area2(s.note,s.key):'')+listEd(s.key,s.cols,"行を追加","opt")+'</div>';});
+  return g+ed;
+}
+function sec(pn,title,inner,open){return '<details class="sec"'+(open?' open':'')+'><summary><span class="pn">'+pn+'</span>'+esc(title)+'</summary><div class="sec-body">'+inner+'</div></details>';}
+
+/* ===== カスタム・テンプレ構成モード：固定構成を使わず、テンプレ本来の見出し/項目/列で出す ===== */
+function custDocHtml(s){
+  if(s.type==="prose")return s.text?'<pre>'+esc(s.text)+'</pre>':'<p>—</p>';
+  if(s.type==="kv")return tbl(["項目","内容"],s.rows);
+  return tbl(s.cols,s.rows);
+}
+function renderCustomDoc(){
+  var m=M.meta,bid=bhash(m.title+"|"+m.version+"|"+m.date),d="";
+  d+='<div class="cover"><div class="eyebrow">'+esc(M.docNote||"テンプレ（公式参考・項目そのまま）")+'</div>'+
+     '<h1>'+esc(m.title)+'</h1>'+
+     '<div class="meta">v'+esc(m.version)+'　/　'+esc(m.date)+'　/　著者：'+esc(m.author)+'　/　状態：'+esc(m.status)+'</div>'+
+     '<div class="meta">成果物：'+esc(m.ptype)+'　/　発行：うさうさ開発フロア</div>'+
+     '<span class="bstamp">BUILD <b>'+esc(m.version)+'</b> · '+esc(m.date)+' · #'+bid+'</span></div>';
+  (M.custom||[]).forEach(function(s,i){d+='<h2>'+esc((i+1)+". "+s.title)+'</h2>'+custDocHtml(s);});
+  if(M.refs&&M.refs.join(""))d+='<h2>参考</h2>'+ul(M.refs);
+  d+='<div class="docfoot">面白きこともなき世を面白く。 — 🐰🦺 うさうさ開発フロア · v'+esc(m.version)+' · '+esc(m.date)+' · build #'+bid+'</div>';
+  $("doc").innerHTML=d; refreshStamp(); updateTraceBanner(); scheduleAutosave();
+}
+function renderCustomForm(){
+  var h="";
+  h+=sec("META","文書情報・ビルド刻印",
+    inp("タイトル","meta.title","タイトル")+
+    '<div class="row2">'+inp("版数","meta.version","版数")+inp("日付","meta.date",STAMP)+'</div>'+
+    '<div class="row2">'+inp("著者（役職名）","meta.author","著者")+inp("ステータス","meta.status","ステータス")+'</div>'+
+    inp("成果物の種別","meta.ptype","成果物の種別"),true);
+  (M.custom||[]).forEach(function(s,idx){
+    var inner="";
+    if(s.type==="prose"){
+      inner='<div class="field"><textarea class="mono" data-custprose="'+idx+'" placeholder="'+esc(s.ph||s.title)+'">'+esc(s.text||"")+'</textarea></div>';
+    }else if(s.type==="kv"){
+      inner=s.rows.map(function(r,i){return '<div class="field"><label>'+esc(r[0])+'</label><input data-cust="'+idx+'" data-i="'+i+'" data-c="1" value="'+esc(r[1]||"")+'" placeholder="'+esc(r[0])+'"></div>';}).join("");
+    }else{
+      inner='<div class="rep">';
+      for(var i=0;i<s.rows.length;i++){inner+='<div class="reprow cols">';
+        for(var c=0;c<s.cols.length;c++){inner+='<input data-cust="'+idx+'" data-i="'+i+'" data-c="'+c+'" placeholder="'+esc(s.cols[c])+'" value="'+esc(s.rows[i][c]||"")+'">';}
+        inner+='<button class="del" data-custdel="'+idx+'" data-i="'+i+'">削除</button></div>';}
+      inner+='<button class="miniadd" data-custadd="'+idx+'">＋ 行を追加</button></div>';
+    }
+    h+=sec("§"+(idx+1),s.title,inner,idx===0);
+  });
+  $("form").innerHTML=h; refreshStamp();
+}
+function customMarkdown(){
+  var m=M.meta,bid=bhash(m.title+"|"+m.version+"|"+m.date),s="";
+  s+="# "+m.title+"\n\n> "+m.ptype+"\n> v"+m.version+" / "+m.date+" / 著者："+m.author+" / 状態："+m.status+" / build #"+bid+"\n\n";
+  (M.custom||[]).forEach(function(sec,i){s+="## "+(i+1)+". "+sec.title+"\n";
+    if(sec.type==="prose")s+=(sec.text?sec.text:"—")+"\n\n";
+    else if(sec.type==="kv")s+=mdtbl(["項目","内容"],sec.rows);
+    else s+=mdtbl(sec.cols,sec.rows);});
+  if(M.refs&&M.refs.join(""))s+="## 参考\n"+mdlist(M.refs);
+  s+="\n---\n🐰🦺 うさうさ開発フロア v"+m.version+"（"+m.date+"） build #"+bid+"\n";
+  return s;
+}
+function customJSON(){
+  return JSON.stringify({schema:"usausa.template/v1",meta:M.meta,build:bhash(M.meta.title+"|"+M.meta.version+"|"+M.meta.date),
+    sections:(M.custom||[]).map(function(s){return s.type==="prose"?{title:s.title,type:"prose",text:s.text||""}:s.type==="kv"?{title:s.title,type:"kv",rows:s.rows}:{title:s.title,type:"table",columns:s.cols,rows:s.rows};}),
+    refs:M.refs||[]},null,2);
+}
+
+function renderForm(){
+  if(M.custom){renderCustomForm();return;}
+  var h="";
+  h+=sec("META","文書情報・ビルド刻印",
+    inp("タイトル","meta.title","タイトル")+
+    '<div class="row2">'+inp("版数","meta.version","版数")+inp("日付","meta.date",STAMP)+'</div>'+
+    '<div class="row2">'+inp("著者（役職名）","meta.author","著者")+inp("ステータス","meta.status","ステータス")+'</div>'+
+    inp("成果物の種別","meta.ptype","成果物の種別"),true);
+
+  h+=sec("OPT","商用オプション（必要な章だけON）",optFormHtml(),false);
+
+  h+=sec("Ⅰ","要件定義：背景・スコープ・ステークホルダー",
+    area("背景と目的（WHY）","bg","この成果物で何を解決するか",false,true)+
+    '<label style="font-size:11.5px;color:var(--moon);font-family:var(--mono)">ステークホルダー（役割／関心事）</label>'+listEd("stakeholders",["役割","関心事"],"追加")+
+    '<label style="font-size:11.5px;color:var(--moon);font-family:var(--mono)">スコープ（やる）</label>'+listEd("scopeIn",["対象"],"追加")+
+    '<label style="font-size:11.5px;color:var(--moon);font-family:var(--mono)">非スコープ（やらない）</label>'+listEd("scopeOut",["対象外"],"追加")+
+    '<label style="font-size:11.5px;color:var(--moon);font-family:var(--mono)">用語定義</label>'+listEd("terms",["用語","定義"],"追加"));
+
+  h+=sec("Ⅰ","要件定義：機能要件 FR・非機能要件 NFR",
+    '<label style="font-size:11.5px;color:var(--moon);font-family:var(--mono)">機能要件（ID／要件／優先度Must,Should,Could,Won\'t／受入基準GWT）</label>'+frModeBar()+listEd("fr",["FR-01","要件","優先度","受入基準(Given-When-Then)"],"FRを追加")+frIdHint()+
+    '<label style="font-size:11.5px;color:var(--moon);font-family:var(--mono)">非機能要件（ID／カテゴリ／要件／指標・目標）</label>'+listEd("nfr",["ID","カテゴリ","要件","指標/目標"],"NFRを追加"));
+
+  h+=sec("Ⅰ","要件定義：制約・前提・リスク",
+    '<label style="font-size:11.5px;color:var(--moon);font-family:var(--mono)">制約（区分／内容）</label>'+listEd("constraints",["区分","内容"],"追加")+
+    '<label style="font-size:11.5px;color:var(--moon);font-family:var(--mono)">前提</label>'+listEd("assumptions",["前提"],"追加")+
+    '<label style="font-size:11.5px;color:var(--moon);font-family:var(--mono)">リスク（リスク／影響／対応）</label>'+listEd("risks",["リスク","影響","対応"],"追加"));
+
+  h+=sec("Ⅱ","基本設計：アーキテクチャ・判断",
+    area("アーキ概要","archNote","構成の方針")+
+    area("構成図（ASCII）","diagram","図をそのまま記述",true)+
+    '<label style="font-size:11.5px;color:var(--moon);font-family:var(--mono)">コンポーネント（層／コンポーネント／責務）</label>'+listEd("components",["層","コンポーネント","責務"],"追加")+
+    '<label style="font-size:11.5px;color:var(--moon);font-family:var(--mono)">データフロー（名称／流れ）</label>'+listEd("dataflow",["名称","流れ"],"追加")+
+    '<label style="font-size:11.5px;color:var(--moon);font-family:var(--mono)">外部インターフェース（名称／種別／概要）</label>'+listEd("extIf",["名称","種別","概要"],"追加")+
+    '<label style="font-size:11.5px;color:var(--moon);font-family:var(--mono)">設計判断 ADR（ID／論点／判断／理由・代替案）</label>'+listEd("adr",["ID","論点","判断","理由/代替"],"ADRを追加"));
+
+  h+=sec("Ⅲ","詳細設計：モジュール・データ・API",
+    '<label style="font-size:11.5px;color:var(--moon);font-family:var(--mono)">モジュール/関数（名前／入力／出力／例外／概要・擬似コード）</label>'+listEd("modules",["名前","入力","出力","例外","概要/擬似コード"],"追加")+
+    '<label style="font-size:11.5px;color:var(--moon);font-family:var(--mono)">データ設計（識別／記憶域・表／型／制約／説明）</label>'+listEd("data",["識別","記憶域/表","型","制約","説明"],"追加")+
+    '<label style="font-size:11.5px;color:var(--moon);font-family:var(--mono)">API詳細（メソッド／パス／リクエスト／レスポンス／ステータス）</label>'+listEd("api",["メソッド","パス","リクエスト","レスポンス","ステータス"],"追加")+
+    area("シーケンス（主要フロー・ASCII）","sequence","→ で流れを書く",true));
+
+  h+=sec("Ⅲ","詳細設計：例外・運用・テスト・改訂",
+    '<label style="font-size:11.5px;color:var(--moon);font-family:var(--mono)">例外・エラー設計（事象／捕捉／扱い）</label>'+listEd("errors",["事象","捕捉","扱い"],"追加")+
+    '<label style="font-size:11.5px;color:var(--moon);font-family:var(--mono)">セキュリティ要件</label>'+listEd("security",["項目"],"追加")+
+    '<label style="font-size:11.5px;color:var(--moon);font-family:var(--mono)">ログ・監査</label>'+listEd("logging",["項目"],"追加")+
+    '<label style="font-size:11.5px;color:var(--moon);font-family:var(--mono)">設定・環境変数（設定／既定・例／説明）</label>'+listEd("env",["設定","既定/例","説明"],"追加")+
+    '<label style="font-size:11.5px;color:var(--moon);font-family:var(--mono)">テスト観点（区分／観点／対応FR＝紐づけるFRのID番号）</label>'+listEd("tests",["区分","観点","対応FR 例:FR-01,03"],"追加")+'<p class="hint">💡 <b>対応FR</b>の欄に、上の機能要件のID番号を入れると、ページ上部の〈トレーサビリティ〉帯に自動で反映されます。例：<b>FR-01,03</b>（複数可・番号だけ「1,3」でもOK）。空欄や「-」は“未紐付け”として黄色で知らせます。</p>'+
+    '<label style="font-size:11.5px;color:var(--moon);font-family:var(--mono)">未決事項 TBD</label>'+listEd("tbd",["ID","内容","暫定方針"],"追加")+
+    '<label style="font-size:11.5px;color:var(--moon);font-family:var(--mono)">改訂履歴</label>'+revModeBar()+listEd("rev",["版","日付","内容"],"追加")+revHint()+
+    '<label style="font-size:11.5px;color:var(--moon);font-family:var(--mono)">参考資料</label>'+listEd("refs",["資料"],"追加"));
+
+  h+=sec("AI","AI再現の前提",area("再現性チェック（何が再構築できるべきか）","repro","本書だけで…が再構築できることを意図する"));
+
+  $("form").innerHTML=h; refreshStamp();
+}
+
+/* ---------------- preview ---------------- */
+function tbl(headers,rows,cls){
+  var h='<table'+(cls?' class="'+cls+'"':'')+'><tr>';
+  for(var i=0;i<headers.length;i++)h+="<th>"+esc(headers[i])+"</th>";
+  h+="</tr>";
+  for(var r=0;r<rows.length;r++){h+="<tr>";for(var c=0;c<rows[r].length;c++)h+="<td>"+esc(rows[r][c])+"</td>";h+="</tr>";}
+  return h+"</table>";
+}
+function priClass(p){p=String(p);return /must/i.test(p)?"pri-must":/should/i.test(p)?"pri-should":/could/i.test(p)?"pri-could":/won/i.test(p)?"pri-wont":"";}
+function frPad2(n){return n<10?"0"+n:""+n;}
+function frNumOf(s){var m=String(s||"").match(/\d+/);return m?parseInt(m[0],10):0;}
+function frMaxNum(){var mx=0;M.fr.forEach(function(r){var n=frNumOf(r[0]);if(n>mx)mx=n;});return mx;}
+function nextFRId(){return "FR-"+frPad2(frMaxNum()+1);}
+function renumberFR(){
+  var map={};
+  M.fr.forEach(function(r,i){var on=frNumOf(r[0]);if(on)map[on]=i+1;});
+  M.tests.forEach(function(t){var cell=String(t[2]||"");if(!cell)return;
+    t[2]=cell.replace(/\d+/g,function(d){var nn=map[parseInt(d,10)];return nn?frPad2(nn):d;});});
+  M.fr.forEach(function(r,i){r[0]="FR-"+frPad2(i+1);});
+}
+function frModeBar(){
+  var auto=M.frAuto!==false;
+  return '<div class="frnum"><span>FR採番：</span>'+
+    '<button type="button" class="segbtn'+(auto?' on':'')+'" data-frmode="auto">自動採番</button>'+
+    '<button type="button" class="segbtn'+(!auto?' on':'')+'" data-frmode="manual">手動</button>'+
+    (auto?'<button type="button" class="miniadd" data-frrenum="1">🔢 通し番号を振り直す</button>':'')+'</div>';
+}
+function frIdHint(){
+  return (M.frAuto!==false)
+    ? '<p class="hint">自動採番：<b>「＋ FRを追加」で FR-01,02… が自動で入ります</b>（必要なら手で直せます）。削除で番号が空いたら〈🔢 通し番号を振り直す〉で整列＝テスト観点の〈対応FR〉も自動で追従します。</p>'
+    : '<p class="hint">手動採番：IDは <b>FR-01・FR-02…</b> と自分で入力。この番号を下の「テスト観点」の〈対応FR〉やADRから参照します。</p>';
+}
+function revNext(){
+  var rows=M.rev||[];
+  for(var i=rows.length-1;i>=0;i--){var v=String(rows[i][0]||"").trim();if(v){if(/\d/.test(v))return v.replace(/(\d+)(?!.*\d)/,function(m){return String(parseInt(m,10)+1);});break;}}
+  return "v1.0";
+}
+function renumberRev(){M.rev.forEach(function(r,i){r[0]="v1."+i;});}
+function revModeBar(){
+  var auto=M.revAuto!==false;
+  return '<div class="frnum"><span>改訂版 採番：</span>'+
+    '<button type="button" class="segbtn'+(auto?' on':'')+'" data-revmode="auto">自動採番</button>'+
+    '<button type="button" class="segbtn'+(!auto?' on':'')+'" data-revmode="manual">手動</button>'+
+    (auto?'<button type="button" class="miniadd" data-revrenum="1">🔢 v1.0から振り直す</button>':'')+'</div>';
+}
+function revHint(){
+  return (M.revAuto!==false)
+    ? '<p class="hint">自動：<b>「＋ 追加」で版を自動採番（直前の版＋1）＋日付は今日（'+STAMP+'）</b>が入ります（必要なら手で直せます）。「🔢 v1.0から振り直す」で v1.0, v1.1… に整列。</p>'
+    : '<p class="hint">手動：版（例 v1.0, v1.1…）と日付を自分で入力します。</p>';
+}
+function frTable(){
+  var h='<table class="ids"><tr><th>ID</th><th>要件</th><th>優先度</th><th>受入基準(GWT)</th></tr>';
+  for(var i=0;i<M.fr.length;i++){var r=M.fr[i];
+    h+='<tr><td>'+esc(r[0])+'</td><td>'+esc(r[1])+'</td><td class="'+priClass(r[2])+'">'+esc(r[2])+'</td><td>'+esc(r[3])+'</td></tr>';}
+  return h+'</table>';
+}
+function box(cls,t,inner){return '<div class="box '+cls+'"><span class="bt">'+esc(t)+'</span>'+inner+'</div>';}
+function ul(arr){return '<ul>'+arr.map(function(x){return "<li>"+esc(Array.isArray(x)?x.join("："):x)+"</li>";}).join("")+'</ul>';}
+
+function renderDoc(){
+  if(M.custom){renderCustomDoc();return;}
+  var m=M.meta, d="";
+  var bid=bhash(m.title+"|"+m.version+"|"+m.date);
+  d+='<div class="cover"><div class="eyebrow">REQUIREMENTS &amp; DETAILED DESIGN · AI-REPRODUCIBLE</div>'+
+     '<h1>'+esc(m.title)+'</h1>'+
+     '<div class="meta">v'+esc(m.version)+'　/　'+esc(m.date)+'　/　著者：'+esc(m.author)+'　/　状態：'+esc(m.status)+'</div>'+
+     '<div class="meta">成果物：'+esc(m.ptype)+'　/　発行：うさうさ開発フロア</div>'+
+     '<span class="bstamp">BUILD <b>'+esc(m.version)+'</b> · '+esc(m.date)+' · #'+bid+'</span></div>';
+
+  d+=box("b-note","本書の読み方",
+     '<p><span class="fact">事実</span>（確認済みの仕様）と <span class="opinion">所感</span>（設計上の意見）を区別。たとえ話は「※不正確」と明示。固有名は出さず役職名で記述。捏造統計・架空引用はしない（ウソなく）。本書はAIが読めば成果物を再現できる粒度を目標とする。</p>');
+
+  if(M.opt.approvals)d+=optSectionHtml(secByKey("approvals"));
+
+  /* PART I */
+  d+='<div class="part">PART I — 要件定義</div>';
+  d+='<h2>1. 背景と目的</h2><p>'+esc(M.bg)+'</p>';
+  d+='<h2>2. ステークホルダー</h2>'+tbl(["役割","関心事"],M.stakeholders);
+  d+='<h2>3. スコープ</h2><h3>3.1 スコープ（やる）</h3>'+ul(M.scopeIn)+'<h3>3.2 非スコープ（やらない）</h3>'+ul(M.scopeOut);
+  d+='<h2>4. 用語定義</h2>'+tbl(["用語","定義"],M.terms);
+  d+='<h2>5. 機能要件（FR）</h2>'+frTable();
+  d+='<h2>6. 非機能要件（NFR）</h2>'+tbl(["ID","カテゴリ","要件","指標/目標"],M.nfr,"ids");
+  d+='<h2>7. 制約・前提</h2>'+tbl(["区分","内容"],M.constraints)+ul(M.assumptions);
+  d+='<h2>8. リスクと対応</h2>'+tbl(["リスク","影響","対応"],M.risks);
+
+  /* PART II */
+  d+='<div class="part">PART II — 基本設計（マクロ）</div>';
+  d+='<h2>9. 全体アーキテクチャ</h2><p>'+esc(M.archNote)+'</p>'+(M.diagram?'<pre>'+esc(M.diagram)+'</pre>':'');
+  d+='<h2>10. コンポーネント構成</h2>'+tbl(["層","コンポーネント","責務"],M.components);
+  d+='<h2>11. データフロー</h2>'+tbl(["名称","流れ"],M.dataflow);
+  d+='<h2>12. 外部インターフェース</h2>'+tbl(["名称","種別","概要"],M.extIf);
+  d+='<h2>13. 設計判断（ADR）</h2>'+tbl(["ID","論点","判断","理由/代替"],M.adr,"ids");
+
+  /* PART III */
+  d+='<div class="part">PART III — 詳細設計（ミクロ・AI再現粒度）</div>';
+  d+='<h2>14. モジュール/関数詳細</h2>'+tbl(["名前","入力","出力","例外","概要/擬似コード"],M.modules);
+  d+='<h2>15. データ設計</h2>'+tbl(["識別","記憶域/表","型","制約","説明"],M.data);
+  d+='<h2>16. API詳細</h2>'+tbl(["メソッド","パス","リクエスト","レスポンス","ステータス"],M.api);
+  d+='<h2>17. シーケンス</h2>'+(M.sequence?'<pre>'+esc(M.sequence)+'</pre>':'<p>—</p>');
+  d+='<h2>18. 例外・エラー設計</h2>'+tbl(["事象","捕捉","扱い"],M.errors)+
+     '<p>方針：握り潰さずログに残す。失敗は<b>「実装のバグ」か「テストの誤り」</b>を切り分けて修正。</p>';
+  d+='<h2>19. セキュリティ要件</h2>'+ul(M.security);
+  d+='<h2>20. ログ・監査</h2>'+ul(M.logging);
+  d+='<h2>21. 設定・環境変数</h2>'+tbl(["設定","既定/例","説明"],M.env);
+  d+='<h2>22. テスト戦略・観点</h2>'+tbl(["区分","観点","対応FR"],M.tests);
+  var tr=computeTrace();
+  d+='<h3>22.1 トレーサビリティ（FR↔テスト観点）</h3>'+tbl(["FR","要件","対応テスト区分","状態"],traceRows(tr),"ids");
+  var wl=traceWarnLines(tr);
+  d+=wl.length?box("b-warn","⚠️ トレーサビリティ警告","<ul>"+wl.map(function(x){return "<li>"+esc(x)+"</li>";}).join("")+"</ul>")
+              :box("b-repro","✅ トレーサビリティ","<p>全FR（"+tr.total+"件）にテスト観点が紐付いています。</p>");
+  d+='<h2>23. 制約・未決事項（TBD）</h2>'+tbl(["ID","内容","暫定方針"],M.tbd,"ids");
+  d+='<h2>24. 改訂履歴</h2>'+tbl(["版","日付","内容"],M.rev);
+  d+='<h2>25. 参考資料</h2>'+ul(M.refs);
+
+  var _apx=OPTSECS.filter(function(s){return s.key!=="approvals"&&M.opt[s.key];});
+  if(_apx.length){d+='<div class="part">PART IV — 商用補足（オプション）</div>';_apx.forEach(function(s){d+=optSectionHtml(s);});}
+
+  d+=box("b-repro","🔁 AI再現性チェック",'<p>'+esc(M.repro||"本書だけで主要構成・モジュール・データ・API・例外・テスト観点が再構築できることを意図する。")+'</p><p>右上「🤖 AI再現プロンプト」で、本書を渡して再現実装させる指示書を書き出せます。</p>');
+
+  d+='<div class="docfoot">面白きこともなき世を面白く。 — 🐰🦺 うさうさ開発フロア · v'+esc(m.version)+' · '+esc(m.date)+' · build #'+bid+'</div>';
+
+  $("doc").innerHTML=d; refreshStamp(); updateTraceBanner(); scheduleAutosave();
+}
+function updateTraceBanner(){
+  var bn=$("traceBanner");if(!bn)return;var tr=computeTrace();
+  if(!tr.total){bn.style.display="none";return;}
+  bn.style.display="block";
+  var gap=tr.uncovered.length||tr.unknownRefs.length;
+  bn.className="tracebar "+(gap?"bad":"good");
+  bn.textContent=(gap?"⚠️ ":"✅ ")+"トレーサビリティ：FR "+tr.total+"件中 "+tr.covered+"件カバー"+
+    (tr.uncovered.length?" ／ 未紐付け "+tr.uncovered.length+"件（"+tr.uncovered.join("、")+"）":"")+
+    (tr.unknownRefs.length?" ／ 不明参照 "+tr.unknownRefs.length+"件":"")+
+    (!gap?"（紐付け漏れなし）":"");
+}
+function refreshStamp(){var m=M.meta;$("stamp").innerHTML='BUILD <b>'+esc(m.version)+'</b><br>'+esc(m.date)+' · #'+bhash(m.title+"|"+m.version+"|"+m.date);}
+
+/* ---------------- exports ---------------- */
+function mdtbl(h,rows){var s="| "+h.join(" | ")+" |\n| "+h.map(function(){return "---";}).join(" | ")+" |\n";for(var r=0;r<rows.length;r++)s+="| "+rows[r].map(function(x){return String(x==null?"":x).replace(/\|/g,"\\|").replace(/\n/g,"<br>");}).join(" | ")+" |\n";return s+"\n";}
+function mdlist(a){return a.map(function(x){return "- "+(Array.isArray(x)?x.join("："):x);}).join("\n")+"\n\n";}
+function toMarkdown(){
+  if(M.custom)return customMarkdown();
+  var m=M.meta,bid=bhash(m.title+"|"+m.version+"|"+m.date),s="";
+  s+="# "+m.title+"\n\n> 要件定義書 兼 詳細設計書（AIが読めば再現可能な粒度）\n> v"+m.version+" / "+m.date+" / 著者："+m.author+" / 状態："+m.status+" / 種別："+m.ptype+" / build #"+bid+"\n\n";
+  s+="> 本書の読み方：事実（仕様）と所感（意見）を区別。たとえ話は※不正確。固有名なし・ウソなく。\n\n";
+  if(M.opt.approvals){var _ap=secByKey("approvals");s+="## "+_ap.title+"\n"+mdtbl(_ap.cols,M.optData[_ap.key]);}
+  s+="# PART I — 要件定義\n\n## 1. 背景と目的\n"+(M.bg||"")+"\n\n";
+  s+="## 2. ステークホルダー\n"+mdtbl(["役割","関心事"],M.stakeholders);
+  s+="## 3. スコープ\n### やる\n"+mdlist(M.scopeIn)+"### やらない\n"+mdlist(M.scopeOut);
+  s+="## 4. 用語定義\n"+mdtbl(["用語","定義"],M.terms);
+  s+="## 5. 機能要件 FR\n"+mdtbl(["ID","要件","優先度","受入基準(GWT)"],M.fr);
+  s+="## 6. 非機能要件 NFR\n"+mdtbl(["ID","カテゴリ","要件","指標/目標"],M.nfr);
+  s+="## 7. 制約・前提\n"+mdtbl(["区分","内容"],M.constraints)+mdlist(M.assumptions);
+  s+="## 8. リスクと対応\n"+mdtbl(["リスク","影響","対応"],M.risks);
+  s+="# PART II — 基本設計（マクロ）\n\n## 9. 全体アーキテクチャ\n"+(M.archNote||"")+"\n\n"+(M.diagram?"```\n"+M.diagram+"\n```\n\n":"");
+  s+="## 10. コンポーネント構成\n"+mdtbl(["層","コンポーネント","責務"],M.components);
+  s+="## 11. データフロー\n"+mdtbl(["名称","流れ"],M.dataflow);
+  s+="## 12. 外部インターフェース\n"+mdtbl(["名称","種別","概要"],M.extIf);
+  s+="## 13. 設計判断 ADR\n"+mdtbl(["ID","論点","判断","理由/代替"],M.adr);
+  s+="# PART III — 詳細設計（ミクロ・AI再現粒度）\n\n## 14. モジュール/関数詳細\n"+mdtbl(["名前","入力","出力","例外","概要/擬似コード"],M.modules);
+  s+="## 15. データ設計\n"+mdtbl(["識別","記憶域/表","型","制約","説明"],M.data);
+  s+="## 16. API詳細\n"+mdtbl(["メソッド","パス","リクエスト","レスポンス","ステータス"],M.api);
+  s+="## 17. シーケンス\n"+(M.sequence?"```\n"+M.sequence+"\n```\n\n":"—\n\n");
+  s+="## 18. 例外・エラー設計\n"+mdtbl(["事象","捕捉","扱い"],M.errors)+"方針：握り潰さずログに残す。失敗は「実装のバグ/テストの誤り」を切り分け。\n\n";
+  s+="## 19. セキュリティ要件\n"+mdlist(M.security);
+  s+="## 20. ログ・監査\n"+mdlist(M.logging);
+  s+="## 21. 設定・環境変数\n"+mdtbl(["設定","既定/例","説明"],M.env);
+  s+="## 22. テスト戦略・観点\n"+mdtbl(["区分","観点","対応FR"],M.tests);
+  var _tr=computeTrace();
+  s+="### 22.1 トレーサビリティ（FR↔テスト観点）\n"+mdtbl(["FR","要件","対応テスト区分","状態"],traceRows(_tr));
+  var _wl=traceWarnLines(_tr);
+  s+=(_wl.length?_wl.map(function(x){return "> "+x;}).join("\n"):"> ✅ 全FRにテスト観点が紐付いています。")+"\n\n";
+  s+="## 23. 制約・未決事項 TBD\n"+mdtbl(["ID","内容","暫定方針"],M.tbd);
+  s+="## 24. 改訂履歴\n"+mdtbl(["版","日付","内容"],M.rev);
+  s+="## 25. 参考資料\n"+mdlist(M.refs);
+  var _apx=OPTSECS.filter(function(s2){return s2.key!=="approvals"&&M.opt[s2.key];});
+  if(_apx.length){s+="# PART IV — 商用補足（オプション）\n\n";_apx.forEach(function(s2){s+="## "+s2.title+"\n"+((s2.note&&(M.optNote[s2.key]||"").trim())?(M.optNote[s2.key]+"\n\n"):"")+mdtbl(s2.cols,M.optData[s2.key]);});}
+  s+="## 🔁 AI再現性チェック\n"+(M.repro||"")+"\n\n---\n面白きこともなき世を面白く。 — 🐰🦺 うさうさ開発フロア v"+m.version+"（"+m.date+"） build #"+bid+"\n";
+  return s;
+}
+function toStandaloneHTML(){
+  var style=document.querySelector("style").innerHTML;
+  var st="<sty"+"le>body{background:#fff;margin:0;padding:24px;font-family:'Yu Gothic',sans-serif}"+style+"</sty"+"le>";
+  return "<!doctype html><html lang=ja><head><meta charset=utf-8><title>"+esc(M.meta.title)+"</title>"+st+"</head><body><div class=stage><div id=doc>"+$("doc").innerHTML+"</div></div></body></html>";
+}
+function csvCell(v){v=String(v==null?"":v);return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v;}
+function csvBlock(name,headers,rows){
+  var s="# "+name+"\n"+headers.map(csvCell).join(",")+"\n";
+  (rows||[]).forEach(function(r){s+=headers.map(function(_,i){return csvCell(r&&r[i]);}).join(",")+"\n";});
+  return s+"\n";
+}
+function metaCsvRows(){return [["タイトル",M.meta.title],["版数",M.meta.version],["日付",M.meta.date],["著者",M.meta.author],["状態",M.meta.status],["種別",M.meta.ptype]];}
+function customCSV(){
+  var s=csvBlock("メタ情報",["項目","値"],metaCsvRows());
+  (M.custom||[]).forEach(function(sec){
+    if(sec.type==="prose")s+=csvBlock(sec.title,["内容"],[[sec.text||""]]);
+    else if(sec.type==="kv")s+=csvBlock(sec.title,["項目","内容"],sec.rows);
+    else s+=csvBlock(sec.title,sec.cols,sec.rows);
+  });
+  return s;
+}
+function toCSV(){
+  if(M.custom)return customCSV();
+  var s=csvBlock("メタ情報",["項目","値"],metaCsvRows());
+  s+=csvBlock("ステークホルダー",["役割","関心事"],M.stakeholders);
+  s+=csvBlock("用語",["用語","定義"],M.terms);
+  s+=csvBlock("機能要件FR",["ID","要件","優先度","受入基準(GWT)"],M.fr);
+  s+=csvBlock("非機能要件NFR",["ID","カテゴリ","要件","指標/目標"],M.nfr);
+  s+=csvBlock("制約",["区分","内容"],M.constraints);
+  s+=csvBlock("リスク",["リスク","影響","対応"],M.risks);
+  s+=csvBlock("コンポーネント",["層","コンポーネント","責務"],M.components);
+  s+=csvBlock("データフロー",["名称","流れ"],M.dataflow);
+  s+=csvBlock("外部インターフェース",["名称","種別","概要"],M.extIf);
+  s+=csvBlock("設計判断ADR",["ID","論点","判断","理由/代替"],M.adr);
+  s+=csvBlock("モジュール",["名前","入力","出力","例外","概要/擬似コード"],M.modules);
+  s+=csvBlock("データ設計",["識別","記憶域/表","型","制約","説明"],M.data);
+  s+=csvBlock("API詳細",["メソッド","パス","リクエスト","レスポンス","ステータス"],M.api);
+  s+=csvBlock("例外設計",["事象","捕捉","扱い"],M.errors);
+  s+=csvBlock("環境変数",["設定","既定/例","説明"],M.env);
+  s+=csvBlock("テスト観点",["区分","観点","対応FR"],M.tests);
+  s+=csvBlock("TBD",["ID","内容","暫定方針"],M.tbd);
+  s+=csvBlock("改訂履歴",["版","日付","内容"],M.rev);
+  return s;
+}
+function toPlainText(){
+  var md=toMarkdown();
+  return md
+    .replace(/^\s*\|[\s:|-]+\|\s*$/gm,"")
+    .replace(/^#{1,6}\s*/gm,"")
+    .replace(/^>\s?/gm,"")
+    .replace(/^\s*\|/gm,"").replace(/\|\s*$/gm,"")
+    .replace(/\s*\|\s*/g,"  ｜  ")
+    .replace(/\*\*(.*?)\*\*/g,"$1")
+    .replace(/`{1,3}/g,"")
+    .replace(/<br>/g,"  ")
+    .replace(/\n{3,}/g,"\n\n");
+}
+function toJSON(){
+  if(M.custom)return customJSON();
+  var o={schema:"usausa.reqdesign/v1",meta:M.meta,build:bhash(M.meta.title+"|"+M.meta.version+"|"+M.meta.date),
+    requirements:{background:M.bg,stakeholders:rowsObj(M.stakeholders,["role","interest"]),
+      scope_in:M.scopeIn,scope_out:M.scopeOut,terms:rowsObj(M.terms,["term","def"]),
+      functional:rowsObj(M.fr,["id","requirement","priority","acceptance"]),
+      nonFunctional:rowsObj(M.nfr,["id","category","requirement","target"]),
+      constraints:rowsObj(M.constraints,["kind","content"]),assumptions:M.assumptions,
+      risks:rowsObj(M.risks,["risk","impact","mitigation"])},
+    architecture:{note:M.archNote,diagram:M.diagram,components:rowsObj(M.components,["layer","component","responsibility"]),
+      dataflow:rowsObj(M.dataflow,["name","flow"]),interfaces:rowsObj(M.extIf,["name","kind","summary"]),
+      decisions:rowsObj(M.adr,["id","topic","decision","rationale"])},
+    detailedDesign:{modules:rowsObj(M.modules,["name","input","output","exceptions","body"]),
+      data:rowsObj(M.data,["id","store","type","constraint","desc"]),
+      api:rowsObj(M.api,["method","path","request","response","status"]),sequence:M.sequence,
+      errors:rowsObj(M.errors,["event","capture","handling"]),security:M.security,logging:M.logging,
+      env:rowsObj(M.env,["key","default","desc"]),tests:rowsObj(M.tests,["kind","view","fr"]),
+      tbd:rowsObj(M.tbd,["id","content","plan"]),revisions:rowsObj(M.rev,["version","date","note"]),refs:M.refs},
+    reproducibility:M.repro};
+  var tr=computeTrace();
+  o.traceability={total:tr.total,covered:tr.covered,uncoveredFR:tr.uncovered,
+    unknownRefs:tr.unknownRefs.map(function(x){return {test:x.kind,frRef:x.ref};}),
+    coverage:tr.coverage.map(function(c){return {fr:c.fr,tests:c.tests.map(function(ti){return M.tests[ti][0]||("行"+(ti+1));})};})};
+  o.options={enabled:OPTSECS.filter(function(s){return M.opt[s.key];}).map(function(s){return s.key;}),sections:{}};
+  OPTSECS.forEach(function(s){if(M.opt[s.key])o.options.sections[s.key]={title:s.title,note:M.optNote[s.key]||"",columns:s.cols,rows:M.optData[s.key]};});
+  return JSON.stringify(o,null,2);
+}
+function rowsObj(rows,keys){return rows.map(function(r){var o={};for(var i=0;i<keys.length;i++)o[keys[i]]=r[i]||"";return o;});}
+function toAIPrompt(){
+  if(M.custom)return "次はテンプレ仕様です。空欄を埋める／この構成で成果物を作成してください。固有名は出さず、捏造はしないでください。\n\n# テンプレ（Markdown）\n<<<SPEC\n"+toMarkdown()+"\nSPEC;\n";
+  var md=toMarkdown();
+  var tr=computeTrace(),gapNote="";
+  if(tr.uncovered.length||tr.unknownRefs.length){
+    gapNote="\n# トレーサビリティ注記（要対応）\n";
+    if(tr.uncovered.length)gapNote+="- テスト観点が未紐付けのFR："+tr.uncovered.join("、")+"。実装前にテスト観点を補完すること。\n";
+    if(tr.unknownRefs.length)gapNote+="- 存在しないFRを参照しているテストがある。参照を修正すること。\n";
+  }
+  return "あなたは一流のソフトウェアエンジニアです。次の「要件定義書 兼 詳細設計書」を唯一の正とし、記載の粒度で成果物を再現実装してください。\n\n"+
+    "# 厳守事項\n"+
+    "- 本書の仕様（事実）に従う。所感（意見）は判断材料に留める。記載のない仕様は勝手に足さず、不明点はTBDとして列挙する。\n"+
+    "- 固有名は出さない（役職名で扱う）。捏造・架空の数値や引用をしない（ウソなく）。\n"+
+    "- 完成後、§22 テスト観点を自動テストとして用意し、全区分ゼロバグを確認してから完了とする。失敗時は「実装のバグ」か「テストの誤り」を切り分ける。\n\n"+
+    "# 進め方\n1) 実装計画（ファイル構成・主要モジュール・データ/IF）を提示\n2) 実装\n3) §22のテスト結果（全区分）と§5 FRの受入基準充足を報告\n\n"+
+    "# 成果物の種別\n"+M.meta.ptype+"\n"+gapNote+"\n"+
+    "# 仕様書（Markdown）\n<<<SPEC\n"+md+"\nSPEC;\n\nまず実装計画から提示してください。";
+}
+
+/* output modal */
+function showOut(title,desc,text,filename,mime){
+  $("outTitle").textContent=title;$("outDesc").textContent=desc;$("outArea").value=text;
+  $("outModal").classList.add("on");
+  $("outModal")._fn=filename;$("outModal")._mime=mime;
+}
+
+/* AI assist (optional) */
+function updateKeyBtn(){var b=$("aiKeyBtn");if(b)b.textContent=AI_KEY?"⚙️ AIの鍵 ✓":"⚙️ AIの鍵";}
+function keyTest(btn){
+  var key=$("keyInput").value.trim(),res=$("keyResult");
+  res.style.color="var(--moon)";res.textContent="… 接続を確認中（Anthropic API へ ping）";
+  var orig=btn.textContent;btn.textContent="🔌…";btn.disabled=true;
+  function show(c,t){res.style.color=c;res.textContent=t;}
+  var headers={"content-type":"application/json","anthropic-version":"2023-06-01"};
+  if(key){headers["x-api-key"]=key;headers["anthropic-dangerous-direct-browser-access"]="true";}
+  fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:headers,body:JSON.stringify({model:"claude-sonnet-4-6",max_tokens:8,messages:[{role:"user",content:"ping"}]})})
+  .then(function(r){
+    if(r.ok){show("#5fd0a8","✅ 接続OK"+(key?"（このキーは有効です）":"（キー無しで接続できました：Claude.ai内など）"));return;}
+    if(r.status===401){show("#ff9b9b","❌ キーが無効です（401 Unauthorized）。キーをご確認ください");return;}
+    if(r.status===403){show("#ff9b9b","❌ 権限エラー（403）。キーの権限・課金状態をご確認ください");return;}
+    if(r.status===429){show("#ffce8a","⚠️ レート制限（429）。少し待って再試行してください");return;}
+    show("#ffce8a","⚠️ HTTP "+r.status+"（サーバ応答はありました）");
+  })
+  .catch(function(e){show("#ffce8a","⚠️ 通信できませんでした（"+e.message+"）。CORS／オフライン／キー未設定の可能性。Claude.ai内ではブラウザから直接APIを叩けない場合があります。");})
+  .then(function(){btn.textContent=orig;btn.disabled=false;});
+}
+function aiAssist(path,btn){
+  var orig=btn.textContent;btn.textContent="🤖…";
+  var prompt="次の『背景と目的』を、です・ます調で2〜3文、誇張なし・固有名なしで整えて。出力は本文のみ。種別："+M.meta.ptype+"、下書き："+(get(path)||"（なし）");
+  var headers={"content-type":"application/json","anthropic-version":"2023-06-01"};
+  if(AI_KEY){headers["x-api-key"]=AI_KEY;headers["anthropic-dangerous-direct-browser-access"]="true";}
+  fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:headers,body:JSON.stringify({model:"claude-sonnet-4-6",max_tokens:400,messages:[{role:"user",content:prompt}]})})
+  .then(function(r){if(!r.ok)throw new Error("HTTP "+r.status);return r.json();})
+  .then(function(j){var txt=(j.content||[]).filter(function(b){return b.type==="text";}).map(function(b){return b.text;}).join("\n").trim();
+    if(txt){setP(path,txt);renderForm();renderDoc();toast("🤖 下書きを反映");}else toast("空の応答でした");})
+  .catch(function(e){toast("AIに届きませんでした（"+e.message+"）。鍵やオフラインをご確認を。");})
+  .then(function(){btn.textContent=orig;});
+}
+
+/* events */
+function onInput(e){var el=e.target;
+  if(el.dataset.note!==undefined){M.optNote[el.dataset.note]=el.value;renderDoc();return;}
+  if(el.dataset.p!==undefined){setP(el.dataset.p,el.value);renderDoc();
+    if(/^meta\./.test(el.dataset.p))refreshStamp();return;}
+  if(el.dataset.custprose!==undefined){M.custom[+el.dataset.custprose].text=el.value;renderDoc();return;}
+  if(el.dataset.cust!==undefined){M.custom[+el.dataset.cust].rows[+el.dataset.i][+el.dataset.c]=el.value;renderDoc();return;}
+  if(el.dataset.list!==undefined&&el.dataset.i!==undefined){var st=el.dataset.store==="opt"?M.optData:M,arr=st[el.dataset.list],i=+el.dataset.i;if(typeof arr[i]==="string")arr[i]=el.value;else arr[i][+el.dataset.c]=el.value;renderDoc();return;}
+}
+var ADDCOLS={stakeholders:["",""],scopeIn:"",scopeOut:"",terms:["",""],fr:["FR-","","Must",""],nfr:["NFR-","","",""],
+  constraints:["",""],assumptions:"",risks:["","",""],components:["","",""],dataflow:["",""],extIf:["","",""],adr:["ADR-","","",""],
+  modules:["","","","",""],data:["","","","",""],api:["","","","",""],errors:["","",""],security:"",logging:"",
+  env:["","",""],tests:["","",""],tbd:["TBD-","",""],rev:["v","",""],refs:""};
+function cloneAdd(d){return typeof d==="string"?d:d.slice();}
+function onClick(e){var el=e.target;
+  if(el.dataset.opt!==undefined){M.opt[el.dataset.opt]=el.checked;renderForm();renderDoc();return;}
+  if(el.dataset.frmode){M.frAuto=(el.dataset.frmode==="auto");renderForm();renderDoc();return;}
+  if(el.dataset.frrenum){renumberFR();renderForm();renderDoc();toast("🔢 FR番号を通し番号で振り直しました（テスト観点の対応FRも更新）");return;}
+  if(el.dataset.revmode){M.revAuto=(el.dataset.revmode==="auto");renderForm();renderDoc();return;}
+  if(el.dataset.revrenum){renumberRev();renderForm();renderDoc();toast("🔢 改訂版を v1.0 から振り直しました");return;}
+  if(el.dataset.custadd!==undefined){var csa=M.custom[+el.dataset.custadd];csa.rows.push(csa.cols.map(function(){return "";}));renderForm();renderDoc();return;}
+  if(el.dataset.custdel!==undefined){var csd=M.custom[+el.dataset.custdel];csd.rows.splice(+el.dataset.i,1);if(!csd.rows.length)csd.rows.push(csd.cols.map(function(){return "";}));renderForm();renderDoc();return;}
+  if(el.dataset.add){var sa=el.dataset.store==="opt"?M.optData:M,da=el.dataset.store==="opt"?OPTADD[el.dataset.add]:ADDCOLS[el.dataset.add];var _row=cloneAdd(da);if(el.dataset.store!=="opt"){if(el.dataset.add==="fr"&&M.frAuto!==false)_row[0]=nextFRId();else if(el.dataset.add==="rev"&&M.revAuto!==false){_row[0]=revNext();_row[1]=STAMP;}}sa[el.dataset.add].push(_row);renderForm();renderDoc();return;}
+  if(el.dataset.del){var sd=el.dataset.store==="opt"?M.optData:M,dd=el.dataset.store==="opt"?OPTADD[el.dataset.del]:ADDCOLS[el.dataset.del];sd[el.dataset.del].splice(+el.dataset.i,1);if(!sd[el.dataset.del].length)sd[el.dataset.del].push(cloneAdd(dd));renderForm();renderDoc();return;}
+  if(el.dataset.ai){aiAssist(el.dataset.ai,el);return;}
+}
+function applyPreset(t){M=ensureOpt(preset(t));renderForm();renderDoc();}
+
+var CHEERS=["// looks buildable 🐰","🦺 ゼロバグでいこう","FR↔テスト 対応OK?","AI再現プロンプト、出せるよ","TBDは正直に残そう"];
+function cheer(){var c=$("cheer");c.textContent=CHEERS[Math.floor(Math.random()*CHEERS.length)];c.classList.add("on");setTimeout(function(){c.classList.remove("on");},1700);}
+function fallbackCopy(t){var ta=document.createElement("textarea");ta.value=t;document.body.appendChild(ta);ta.select();try{document.execCommand("copy");toast("📋 コピーしました");}catch(e){toast("コピーできませんでした");}document.body.removeChild(ta);}
+function copyText(t){if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(function(){toast("📋 コピーしました");},function(){fallbackCopy(t);});}else fallbackCopy(t);}
+
+function init(){
+  AI_KEY=lsGet(AIKEY_LS)||"";updateKeyBtn();
+  var as=lsGet(AUTOSAVE);
+  if(as){try{var o=JSON.parse(as);if(o&&o.meta){var mg=Object.assign({},preset("empty"),o);if(!o.blankHints)delete mg.blankHints;M=ensureOpt(mg);}}catch(e){}}
+  renderForm();renderDoc();updateStoreMode();refreshTplSel();refreshDraftSel();
+  var ps=$("presetSel");if(ps){var groups={},order=[];BUILTINS.forEach(function(b){if(!groups[b.group]){groups[b.group]=[];order.push(b.group);}groups[b.group].push(b);});ps.innerHTML=order.map(function(g){return '<optgroup label="'+esc(g)+'">'+groups[g].map(function(b){return '<option value="'+b.id+'">'+esc(b.label)+'</option>';}).join("")+'</optgroup>';}).join("");ps.value="artifact";}
+  $("form").addEventListener("input",onInput);
+  $("form").addEventListener("click",onClick);
+  $("presetSel").addEventListener("change",function(e){var id=e.target.value;if(!id)return;var stashed=false;
+    try{if(M&&M.meta&&((M.meta.title&&M.meta.title.replace(/\s/g,""))||(M.bg&&M.bg.replace(/\s/g,"")))){var a=getDrafts();a.unshift({ts:new Date().toISOString(),title:(M.meta.title||"(無題)")+"（自動退避）",model:M});if(a.length>DRAFTMAX)a=a.slice(0,DRAFTMAX);setDrafts(a);refreshDraftSel();stashed=true;}}catch(_){}
+    applyPreset(id);
+    toast("「"+e.target.options[e.target.selectedIndex].text+"」を読み込みました"+(stashed?"（前の内容は🕒一時保存へ退避）":""));});
+  $("copyBtn").addEventListener("click",function(){copyText(toMarkdown());});
+  $("mdBtn").addEventListener("click",function(){dl(fileBase()+".md",toMarkdown(),"text/markdown;charset=utf-8");toast("⬇ Markdownを保存");});
+  $("htmlBtn").addEventListener("click",function(){dl(fileBase()+".html",toStandaloneHTML(),"text/html;charset=utf-8");toast("⬇ HTMLを保存");});
+  $("txtBtn").addEventListener("click",function(){dl(fileBase()+".txt",toPlainText(),"text/plain;charset=utf-8");toast("⬇ .txt を保存しました");});
+  $("csvBtn").addEventListener("click",function(){dl(fileBase()+".csv","\uFEFF"+toCSV(),"text/csv;charset=utf-8");toast("⬇ CSV を保存しました（Excelで開けます）");});
+  $("docxBtn").addEventListener("click",function(){genDocx(this);});
+  $("xlsxBtn").addEventListener("click",function(){genXlsx(this);});
+  $("jsonBtn").addEventListener("click",function(){showOut("構造化JSON","AIや別ツールが読める機械可読データです。","",fileBase()+".json","application/json;charset=utf-8");$("outArea").value=toJSON();});
+  $("promptBtn").addEventListener("click",function(){showOut("🤖 AI再現プロンプト","別AIに丸ごと貼り付ければ、本書から成果物を再現実装させられます。","",fileBase()+"_ai-prompt.txt","text/plain;charset=utf-8");$("outArea").value=toAIPrompt();});
+  $("pdfBtn").addEventListener("click",function(){window.print();});
+  $("previewRefreshBtn").addEventListener("click",function(){renderDoc();toast("🔄 プレビューを最新に更新しました");});
+  $("saveBtn").addEventListener("click",function(){saveEdits();});
+  $("draftSaveBtn").addEventListener("click",function(){saveDraft();});
+  $("draftRestoreBtn").addEventListener("click",function(){var v=$("draftSel").value;if(v!=="")restoreDraft(+v);else toast("復元する一時保存を選んでください");});
+  $("draftDelBtn").addEventListener("click",function(){var v=$("draftSel").value;if(v!=="")deleteDraft(+v);else toast("削除する一時保存を選んでください");});
+  $("tplSaveBtn").addEventListener("click",function(){var def=M.meta.title||"ひな形";var n;try{n=window.prompt?window.prompt("ひな形の名前を入力",def):def;}catch(e){n=def;}if(n)saveTemplateNamed(n);});
+  $("tplLoadBtn").addEventListener("click",function(){var v=$("tplSel").value;if(v)loadTemplate(v);else toast("読み込むひな形を選んでください");});
+  $("tplDelBtn").addEventListener("click",function(){var v=$("tplSel").value;if(v)deleteTemplate(v);else toast("削除するひな形を選んでください");});
+  $("tplDlBtn").addEventListener("click",function(){downloadTemplate();});
+  $("tplImpBtn").addEventListener("click",function(){$("tplFile").click();});
+  $("tplFile").addEventListener("change",onImportFile);
+  $("bundleDlBtn").addEventListener("click",function(){exportAllTemplates();});
+  $("bundleImpBtn").addEventListener("click",function(){$("bundleFile").click();});
+  $("bundleFile").addEventListener("change",onBundleFile);
+  $("bun").addEventListener("click",cheer);
+  $("aiKeyBtn").addEventListener("click",function(){$("keyInput").value=AI_KEY;$("keyResult").textContent="";$("keyModal").classList.add("on");});
+  $("keySave").addEventListener("click",function(){AI_KEY=$("keyInput").value.trim();if(AI_KEY){lsSet(AIKEY_LS,AI_KEY);}else{try{localStorage.removeItem(AIKEY_LS);}catch(e){}delete MEM[AIKEY_LS];}updateKeyBtn();$("keyModal").classList.remove("on");toast(AI_KEY?"🔑 この端末に保存しました（送信先はAnthropic APIのみ）":"鍵を空にしました");});
+  $("keyClear").addEventListener("click",function(){AI_KEY="";$("keyInput").value="";try{localStorage.removeItem(AIKEY_LS);}catch(e){}delete MEM[AIKEY_LS];$("keyResult").textContent="";updateKeyBtn();toast("🧹 鍵をクリアしました（この端末から削除）");});
+  $("keyTest").addEventListener("click",function(){keyTest(this);});
+  $("keyModal").addEventListener("click",function(e){if(e.target===$("keyModal"))$("keyModal").classList.remove("on");});
+  $("errBtn").addEventListener("click",openErrLog);
+  $("errCopy").addEventListener("click",function(){copyText($("errArea").value||logText());});
+  $("errClear").addEventListener("click",function(){logSave([]);__USLOGMEM__=[];try{sessionStorage.removeItem(ERRLOG_K);}catch(e){}$("errArea").value="";updateErrBtn();toast("🧹 ログをクリアしました");});
+  $("errModal").addEventListener("click",function(e){if(e.target===$("errModal"))$("errModal").classList.remove("on");});
+  $("helpBtn").addEventListener("click",function(){$("helpModal").classList.add("on");});
+  $("helpClose").addEventListener("click",function(){$("helpModal").classList.remove("on");});
+  $("helpModal").addEventListener("click",function(e){if(e.target===$("helpModal"))$("helpModal").classList.remove("on");});
+  updateErrBtn();
+  $("outCopy").addEventListener("click",function(){copyText($("outArea").value);});
+  $("outDl").addEventListener("click",function(){dl($("outModal")._fn,$("outArea").value,$("outModal")._mime);toast("⬇ 保存しました");});
+  $("outModal").addEventListener("click",function(e){if(e.target===$("outModal"))$("outModal").classList.remove("on");});
+}
+window.__USAUSA_DEVFLOOR__={version:VERSION,build:STAMP,edition:"REQDESIGN-GEN PRO",get model(){return M;},toMarkdown:toMarkdown,toJSON:toJSON,toAIPrompt:toAIPrompt,toStandaloneHTML:toStandaloneHTML,toPlainText:toPlainText,toCSV:toCSV,applyPreset:applyPreset,renderDoc:renderDoc,computeTrace:computeTrace,genDocx:genDocx,genXlsx:genXlsx,saveEdits:saveEdits,saveTemplateNamed:saveTemplateNamed,loadTemplate:loadTemplate,deleteTemplate:deleteTemplate,getTemplates:getTemplates,downloadTemplate:downloadTemplate,importTemplateText:importTemplateText,loadModel:loadModel,exportAllTemplates:exportAllTemplates,importBundleText:importBundleText,builtins:BUILTINS,saveDraft:saveDraft,getDrafts:getDrafts,restoreDraft:restoreDraft,deleteDraft:deleteDraft};
+if(document.readyState!=="loading")init();else document.addEventListener("DOMContentLoaded",init);
+</script>
+</body>
+</html>
